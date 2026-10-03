@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Layers,
   ChevronRight,
-  Sparkles,
 } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
 
@@ -95,17 +94,6 @@ export const Dashboard: React.FC = () => {
             <span>View Demo (AI Agents Podcast)</span>
           </button>
 
-          <button
-            onClick={() => navigateTo('landing')}
-            className="flex items-center gap-2 px-4 py-2.5 clay-button-secondary text-xs font-medium cursor-pointer active:scale-95"
-            title="View the cinematic video hero experience"
-          >
-            <Sparkles
-              className="w-3.5 h-3.5"
-              style={{ color: 'var(--color-accent-terracotta)' }}
-            />
-            <span>Hero Showcase</span>
-          </button>
         </div>
       </section>
 
