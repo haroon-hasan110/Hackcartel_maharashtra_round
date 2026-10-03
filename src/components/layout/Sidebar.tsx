@@ -23,7 +23,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
   const { currentRoute, navigateTo, theme, cycleTheme } = useProject();
 
   const navItems: { label: string; route: AppRoute; icon: React.ElementType }[] = [
-    { label: 'Hero Page', route: 'landing', icon: Sparkles },
     { label: 'Home', route: 'dashboard', icon: LayoutDashboard },
     { label: 'Projects', route: 'projects', icon: FolderKanban },
     { label: 'Content Map', route: 'content-map', icon: MapPin },
@@ -152,17 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
           <span>Settings</span>
         </button>
 
-        <button
-          onClick={() => handleNav('landing')}
-          className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-xl transition-colors text-left hover:opacity-85 cursor-pointer"
-          style={{ color: 'var(--color-text-muted)' }}
-        >
-          <ArrowLeft
-            className="w-4 h-4"
-            style={{ color: 'var(--color-accent-terracotta)' }}
-          />
-          <span>Return to Hero Page</span>
-        </button>
+
       </div>
     </aside>
   );

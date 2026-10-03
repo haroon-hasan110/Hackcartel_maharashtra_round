@@ -199,23 +199,6 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
 
       {/* Right zone: Theme Toggle & Actions */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Return to Hero Page */}
-        <button
-          onClick={() => navigateTo('landing')}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer clay-chip hover:opacity-90"
-          style={{
-            backgroundColor: 'var(--color-bg-card-elevated)',
-            color: 'var(--color-text-main)',
-          }}
-          title="Return to Hero Page"
-        >
-          <Sparkles
-            className="w-3.5 h-3.5"
-            style={{ color: 'var(--color-accent-terracotta)' }}
-          />
-          <span className="hidden sm:inline">Hero Page</span>
-        </button>
-
         {/* Clean Theme Toggle Button */}
         <div className="relative">
           <button

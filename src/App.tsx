@@ -27,12 +27,37 @@ const LandingHero: React.FC = () => {
   const hasStartedRef = useRef<boolean>(false);
 
   const [notification, setNotification] = useState<string | null>(null);
+  const [dragProgress, setDragProgress] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const sliderTrackRef = useRef<HTMLDivElement | null>(null);
+  const dragStartXRef = useRef(0);
+  const dragBaseRef = useRef(0);
+  const didDragRef = useRef(false);
 
   const showNotification = (msg: string) => {
     setNotification(msg);
     setTimeout(() => {
       setNotification((curr) => (curr === msg ? null : curr));
     }, 2800);
+  };
+
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(value, min), max);
+
+  const getMaxTravel = () => {
+    const track = sliderTrackRef.current;
+    if (!track) return 180;
+    return Math.max(24, track.clientWidth - 56);
+  };
+
+  const triggerStartAction = () => {
+    if (isCompleting) return;
+    setIsCompleting(true);
+    setDragProgress(1);
+    window.setTimeout(() => {
+      navigateTo('upload');
+    }, 220);
   };
 
   // Cancels any currently running animation frame
@@ -253,19 +278,111 @@ const LandingHero: React.FC = () => {
           <div className="flex flex-col items-center gap-4">
             {/* Primary CTA: Green glow pill */}
             <button
-              onClick={() => navigateTo('upload')}
-              className="hero-cta-primary pl-6 pr-2 py-2 flex items-center gap-3.5 group cursor-pointer active:scale-[0.98] transition-all duration-200 focus:outline-none"
+              onClick={(event) => {
+                if (isDragging || isCompleting || didDragRef.current) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  didDragRef.current = false;
+                  return;
+                }
+                navigateTo('upload');
+              }}
+              className="hero-cta-primary pl-6 pr-2 py-2 flex items-center gap-3.5 group cursor-pointer active:scale-[0.98] transition-all duration-200 focus:outline-none relative overflow-hidden select-none"
               style={{
                 background: 'linear-gradient(115deg, rgba(231,255,186,0.92) 0%, rgba(208,242,135,0.86) 48%, rgba(140,217,106,0.82) 100%)',
                 color: '#07180e',
                 borderColor: 'rgba(240,255,220,0.72)',
                 boxShadow: '0 0 0 1px rgba(255,255,255,0.18), 0 24px 40px rgba(151, 213, 96, 0.28), inset 0 1px 0 rgba(255,255,255,0.78)',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                touchAction: 'none',
               }}
             >
-              <span className="text-sm font-bold tracking-wide" style={{ color: '#0d1d11' }}>
+              <div
+                ref={sliderTrackRef}
+                className="absolute inset-y-1.5 left-3 right-3 rounded-full overflow-hidden pointer-events-none"
+              >
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full transition-all duration-150 ease-out"
+                  style={{
+                    width: `${Math.max(18, dragProgress * (getMaxTravel() + 8))}px`,
+                    background:
+                      'linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.3) 42%, rgba(255,255,255,0.16) 100%)',
+                    opacity: isDragging || dragProgress > 0 ? 1 : 0,
+                    filter: isDragging ? 'brightness(1.2)' : 'brightness(1)',
+                  }}
+                />
+              </div>
+
+              {!isDragging && dragProgress === 0 && !isCompleting && (
+                <span className="absolute right-16 top-1/2 -translate-y-1/2 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#20331c] opacity-70 z-10">
+                  Drag to start
+                </span>
+              )}
+
+              <span className="text-sm font-bold tracking-wide relative z-10" style={{ color: '#0d1d11' }}>
                 Start with your source
               </span>
-              <div className="bg-[#f4fdf0] rounded-full p-2.5 sm:p-3 text-[#0f1e13] group-hover:scale-105 active:scale-95 transition-transform duration-200 shadow-sm border border-[#d8efb1]">
+
+              <div
+                onPointerDown={(event) => {
+                  if (isCompleting) return;
+                  event.preventDefault();
+                  event.stopPropagation();
+                  didDragRef.current = false;
+                  setIsDragging(true);
+                  dragStartXRef.current = event.clientX;
+                  dragBaseRef.current = dragProgress;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (!isDragging || isCompleting) return;
+                  const maxTravel = getMaxTravel();
+                  const deltaX = event.clientX - dragStartXRef.current;
+                  const nextProgress = clamp(
+                    dragBaseRef.current + deltaX / Math.max(maxTravel, 1),
+                    0,
+                    1
+                  );
+
+                  if (Math.abs(deltaX) > 2) {
+                    didDragRef.current = true;
+                  }
+
+                  setDragProgress(nextProgress);
+
+                  if (nextProgress >= 0.92) {
+                    setIsDragging(false);
+                    triggerStartAction();
+                  }
+                }}
+                onPointerUp={() => {
+                  if (!isDragging) return;
+                  setIsDragging(false);
+                  if (dragProgress < 0.92) {
+                    setDragProgress(0);
+                  }
+                }}
+                onPointerCancel={() => {
+                  if (!isDragging) return;
+                  setIsDragging(false);
+                  if (dragProgress < 0.92) {
+                    setDragProgress(0);
+                  }
+                }}
+                onPointerLeave={() => {
+                  if (!isDragging) return;
+                  setIsDragging(false);
+                  if (dragProgress < 0.92) {
+                    setDragProgress(0);
+                  }
+                }}
+                className="relative z-20 flex items-center justify-center rounded-full bg-[#f4fdf0] p-2.5 sm:p-3 text-[#0f1e13] transition-transform duration-200 ease-out shadow-sm border border-[#d8efb1]"
+                style={{
+                  transform: `translateX(${dragProgress * getMaxTravel()}px)`,
+                  boxShadow: isDragging ? '0 12px 24px rgba(0,0,0,0.15)' : '0 2px 8px rgba(0,0,0,0.08)',
+                }}
+              >
                 <ArrowRight className="hero-arrow-motion w-4 h-4 stroke-[2.5]" />
               </div>
             </button>
