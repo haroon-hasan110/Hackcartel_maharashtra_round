@@ -34,16 +34,17 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
   const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
-    if (!supabase) return;
+    const client = supabase;
+    if (!client) return;
 
     const loadSession = async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await client.auth.getSession();
       setAuthUser(data.session?.user ?? null);
     };
 
     loadSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: authListener } = client.auth.onAuthStateChange((_event, session) => {
       setAuthUser(session?.user ?? null);
     });
 
