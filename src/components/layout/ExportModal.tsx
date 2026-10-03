@@ -114,7 +114,7 @@ export const ExportModal: React.FC = () => {
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
                 style={{
-                  backgroundColor: 'rgba(200, 104, 72, 0.16)',
+                  backgroundColor: 'rgba(185, 237, 121, 0.14)',
                   color: 'var(--color-accent-terracotta)',
                 }}
               >
@@ -150,9 +150,8 @@ export const ExportModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedFormat('mp4')}
-                  className={`p-3 rounded-2xl text-left text-xs transition-all active:scale-98 cursor-pointer ${
-                    selectedFormat === 'mp4' ? 'clay-card-elevated' : 'clay-card hover:opacity-90'
-                  }`}
+                  className={`p-3 rounded-2xl text-left text-xs transition-all active:scale-98 cursor-pointer ${selectedFormat === 'mp4' ? 'clay-card-elevated' : 'clay-card hover:opacity-90'
+                    }`}
                   style={{
                     backgroundColor: selectedFormat === 'mp4' ? 'var(--color-bg-card)' : 'var(--color-bg-card-elevated)',
                     borderColor: selectedFormat === 'mp4' ? 'var(--color-accent-terracotta)' : 'var(--color-border-subtle)',
@@ -174,9 +173,8 @@ export const ExportModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedFormat('prores')}
-                  className={`p-3 rounded-2xl text-left text-xs transition-all active:scale-98 cursor-pointer ${
-                    selectedFormat === 'prores' ? 'clay-card-elevated' : 'clay-card hover:opacity-90'
-                  }`}
+                  className={`p-3 rounded-2xl text-left text-xs transition-all active:scale-98 cursor-pointer ${selectedFormat === 'prores' ? 'clay-card-elevated' : 'clay-card hover:opacity-90'
+                    }`}
                   style={{
                     backgroundColor: selectedFormat === 'prores' ? 'var(--color-bg-card)' : 'var(--color-bg-card-elevated)',
                     borderColor: selectedFormat === 'prores' ? 'var(--color-accent-terracotta)' : 'var(--color-border-subtle)',
@@ -216,9 +214,8 @@ export const ExportModal: React.FC = () => {
                     key={ratio.id}
                     type="button"
                     onClick={() => setSelectedResolution(ratio.id as any)}
-                    className={`flex-1 p-2.5 rounded-2xl border text-left text-xs transition-all active:scale-98 cursor-pointer ${
-                      selectedResolution === ratio.id ? 'clay-card-elevated' : 'clay-card'
-                    }`}
+                    className={`flex-1 p-2.5 rounded-2xl border text-left text-xs transition-all active:scale-98 cursor-pointer ${selectedResolution === ratio.id ? 'clay-card-elevated' : 'clay-card'
+                      }`}
                     style={{
                       backgroundColor: selectedResolution === ratio.id ? 'var(--color-bg-card)' : 'var(--color-bg-card-elevated)',
                       borderColor: selectedResolution === ratio.id ? 'var(--color-accent-terracotta)' : 'var(--color-border-subtle)',
@@ -252,7 +249,7 @@ export const ExportModal: React.FC = () => {
                   type="checkbox"
                   checked={includeCaptions}
                   onChange={(e) => setIncludeCaptions(e.target.checked)}
-                  className="rounded w-4 h-4 cursor-pointer accent-orange-600"
+                  className="rounded w-4 h-4 cursor-pointer accent-lime-400"
                 />
               </label>
 
@@ -262,7 +259,7 @@ export const ExportModal: React.FC = () => {
                   type="checkbox"
                   checked={includeGroundingTag}
                   onChange={(e) => setIncludeGroundingTag(e.target.checked)}
-                  className="rounded w-4 h-4 cursor-pointer accent-orange-600"
+                  className="rounded w-4 h-4 cursor-pointer accent-lime-400"
                 />
               </label>
             </div>
@@ -275,7 +272,7 @@ export const ExportModal: React.FC = () => {
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
               style={{
-                backgroundColor: 'rgba(200, 104, 72, 0.16)',
+                backgroundColor: 'rgba(185, 237, 121, 0.14)',
                 color: 'var(--color-accent-terracotta)',
               }}
             >

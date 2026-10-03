@@ -78,6 +78,7 @@ export const Dashboard: React.FC = () => {
           <button
             onClick={() => navigateTo('upload')}
             className="flex items-center gap-2 px-5 py-2.5 clay-button-primary text-xs font-semibold cursor-pointer active:scale-95 shadow-sm"
+            style={{ boxShadow: '0 16px 28px rgba(157, 89, 63, 0.22)' }}
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Project</span>
@@ -230,9 +231,8 @@ export const Dashboard: React.FC = () => {
               <button
                 key={step.title}
                 onClick={() => setActivePipelineStep(idx)}
-                className={`p-3 rounded-2xl text-left transition-all active:scale-95 cursor-pointer flex flex-col justify-between ${
-                  isSelected ? 'clay-card-elevated shadow-sm' : 'clay-card hover:opacity-90'
-                }`}
+                className={`p-3 rounded-2xl text-left transition-all active:scale-95 cursor-pointer flex flex-col justify-between ${isSelected ? 'clay-card-elevated shadow-sm' : 'clay-card hover:opacity-90'
+                  }`}
                 style={{
                   backgroundColor: isSelected
                     ? 'var(--color-bg-card)'
@@ -302,7 +302,7 @@ export const Dashboard: React.FC = () => {
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
               style={{
-                backgroundColor: 'rgba(200, 104, 72, 0.14)',
+                backgroundColor: 'rgba(185, 237, 121, 0.14)',
                 color: 'var(--color-accent-terracotta)',
               }}
             >

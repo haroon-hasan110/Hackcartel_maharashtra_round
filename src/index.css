@@ -10,8 +10,8 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #FAF7F2;
-    color: #2A2420;
+    background: #080a08;
+    color: #eef3e8;
     overflow-x: hidden;
   }
 }
@@ -20,25 +20,25 @@
    Claymorphism & Wabi-Sabi Theme Tokens
    ========================================================================== */
 
-/* 1. Wabi-Sabi Clay (Warm Earth, Raw Linen & Terracotta) */
+/* 1. Premium Wabi-Sabi Clay (Warm Earth, Ivory & Copper) */
 .theme-wabi-sabi {
-  --color-bg-app: #FAF7F2;
-  --color-bg-sidebar: #ECE4D6;
-  --color-bg-topbar: rgba(250, 247, 242, 0.94);
-  --color-bg-card: #E7DFD2;
-  --color-bg-card-elevated: #EFE7DB;
-  --color-bg-card-hover: #EBE2D5;
-  --color-bg-input: #DFD7C8;
-  --color-border: rgba(120, 100, 80, 0.16);
-  --color-border-subtle: rgba(120, 100, 80, 0.10);
-  --color-border-active: #BF5C38;
-  --color-text-main: #2A2420;
-  --color-text-muted: #6C6258;
-  --color-text-faint: #988D82;
-  --color-accent-terracotta: #BF5C38;
-  --color-accent-matcha: #5E7558;
-  --color-accent-stone: #423B36;
-  --color-accent-ochre: #B88242;
+  --color-bg-app: #F7F1E8;
+  --color-bg-sidebar: #EEE2D6;
+  --color-bg-topbar: rgba(247, 241, 232, 0.86);
+  --color-bg-card: #F3EAE0;
+  --color-bg-card-elevated: #FAF5F0;
+  --color-bg-card-hover: #F0E6DA;
+  --color-bg-input: #EDE1D4;
+  --color-border: rgba(67, 43, 31, 0.12);
+  --color-border-subtle: rgba(67, 43, 31, 0.08);
+  --color-border-active: #C76E4F;
+  --color-text-main: #231D1A;
+  --color-text-muted: #6D5F57;
+  --color-text-faint: #978878;
+  --color-accent-terracotta: #C76E4F;
+  --color-accent-matcha: #7A8E6B;
+  --color-accent-stone: #2E2A29;
+  --color-accent-ochre: #B77A41;
 
   /* Clay Shadows (Warm Sculpted Ceramics & Matte Touch) */
   --clay-outer-shadow: 10px 14px 28px rgba(165, 145, 125, 0.18), -8px -8px 22px rgba(255, 255, 255, 0.9);
@@ -138,78 +138,80 @@
 /* Ceramic Buttons with Tactile Matte Touch */
 .ceramic-matte-primary,
 .clay-button-primary {
-  background: linear-gradient(180deg, #D46F4C 0%, #BF5C38 100%);
-  color: #FFFFFF;
-  border: 1px solid rgba(160, 65, 35, 0.45);
-  box-shadow: 
-    0 4px 14px rgba(191, 92, 56, 0.28),
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35),
-    inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+  background: linear-gradient(180deg, #E9E0D8 0%, #D9CFC3 18%, #C8B9AC 55%, #BBA899 100%);
+  color: #1C1A19;
+  border: 1px solid rgba(86, 75, 67, 0.18);
+  box-shadow:
+    0 18px 28px rgba(31, 25, 22, 0.18),
+    0 6px 12px rgba(31, 20, 14, 0.10),
+    inset 0 2px 2px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 8px rgba(95, 82, 71, 0.18);
   border-radius: 9999px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   user-select: none;
 }
 
 .ceramic-matte-primary:hover,
 .clay-button-primary:hover {
-  filter: brightness(1.04);
-  transform: translateY(-1px);
-  box-shadow: 
-    0 6px 18px rgba(191, 92, 56, 0.34),
-    0 2px 4px rgba(0, 0, 0, 0.08),
-    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.4),
-    inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+  transform: translateY(-2px) scale(1.01);
+  filter: brightness(1.02);
+  box-shadow:
+    0 22px 34px rgba(31, 25, 22, 0.2),
+    0 8px 16px rgba(31, 20, 14, 0.12),
+    inset 0 2px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -4px 8px rgba(95, 82, 71, 0.2);
 }
 
 .ceramic-matte-primary:active,
 .clay-button-primary:active {
-  transform: translateY(1px) scale(0.985);
-  box-shadow: 
-    0 2px 6px rgba(191, 92, 56, 0.2),
-    inset 0 2px 4px rgba(90, 30, 12, 0.3);
+  transform: translateY(1px) scale(0.99);
+  box-shadow:
+    0 10px 16px rgba(31, 25, 22, 0.14),
+    inset 0 2px 5px rgba(95, 82, 71, 0.2);
 }
 
 .ceramic-matte-secondary,
 .clay-button-secondary {
-  background-color: var(--color-bg-card-elevated, #EFE7DB);
-  color: var(--color-text-main, #2A2420);
-  border: 1px solid rgba(185, 170, 150, 0.45);
-  box-shadow: 
-    0 3px 10px rgba(150, 130, 110, 0.14),
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
-    inset 0 -1.5px 2px rgba(160, 140, 120, 0.12);
+  background: rgba(255, 255, 255, 0.32);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #1F1C1A;
+  border: 1px solid rgba(108, 98, 90, 0.22);
+  box-shadow:
+    0 12px 24px rgba(18, 16, 15, 0.08),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1.5px 2px rgba(88, 79, 72, 0.08);
   border-radius: 9999px;
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 600;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   user-select: none;
 }
 
 .ceramic-matte-secondary:hover,
 .clay-button-secondary:hover {
-  background-color: var(--color-bg-card-hover, #EBE2D5);
-  transform: translateY(-1px);
-  box-shadow: 
-    0 5px 14px rgba(150, 130, 110, 0.2),
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.48);
+  transform: translateY(-2px);
+  box-shadow:
+    0 18px 28px rgba(18, 16, 15, 0.12),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1.5px 2px rgba(88, 79, 72, 0.12);
 }
 
 .ceramic-matte-secondary:active,
 .clay-button-secondary:active {
-  transform: translateY(1px) scale(0.985);
-  box-shadow: 
-    0 1px 3px rgba(150, 130, 110, 0.1),
-    inset 0 2px 4px rgba(150, 130, 110, 0.25);
+  transform: translateY(1px) scale(0.99);
+  box-shadow:
+    0 8px 14px rgba(18, 16, 15, 0.08),
+    inset 0 2px 4px rgba(88, 79, 72, 0.12);
 }
 
 .ceramic-matte-chip,
 .clay-chip {
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(150, 130, 110, 0.12),
     inset 0 1px 1.5px rgba(255, 255, 255, 0.75),
     inset 0 -1px 1.5px rgba(160, 140, 120, 0.1);
@@ -240,6 +242,82 @@
 .wabi-texture {
   background-image: radial-gradient(rgba(140, 120, 100, 0.05) 1px, transparent 0);
   background-size: 24px 24px;
+}
+
+.premium-hero-shell {
+  background:
+    radial-gradient(circle at 48% 38%, rgba(136, 190, 87, 0.18) 0%, rgba(8, 12, 9, 0.12) 25%, rgba(5, 7, 6, 0.72) 58%, rgba(3, 5, 4, 0.92) 100%),
+    linear-gradient(180deg, rgba(7, 10, 8, 0.9) 0%, rgba(10, 13, 11, 0.94) 100%);
+}
+
+.premium-hero-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16, 20, 15, 0.16), rgba(5, 7, 6, 0.28));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-badge {
+  box-shadow: 0 0 0 1px rgba(168, 228, 115, 0.2), 0 10px 28px rgba(14, 18, 14, 0.28), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+}
+
+.hero-title span:last-child {
+  color: #d4ef9e;
+  text-shadow: 0 0 18px rgba(164, 221, 117, 0.24);
+}
+
+.hero-subtitle {
+  text-shadow: 0 3px 18px rgba(16, 24, 17, 0.5);
+}
+
+.hero-cta-primary {
+  min-width: 420px;
+  border-radius: 9999px;
+  border: 1px solid rgba(240, 255, 220, 0.72);
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  transform: translateZ(0);
+}
+
+.hero-cta-secondary {
+  min-width: 420px;
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-radius: 9999px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.hero-arrow-motion {
+  animation: hero-arrow-slide 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-arrow-slide {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-arrow-motion {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+
+  .hero-cta-primary,
+  .hero-cta-secondary {
+    min-width: 0;
+    width: min(100%, 420px);
+  }
 }
 
 /* ==========================================================================
@@ -357,15 +435,13 @@
   inset: 0;
   border-radius: inherit;
   padding: 1.4px;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.15) 20%,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0) 60%,
-    rgba(255, 255, 255, 0.15) 80%,
-    rgba(255, 255, 255, 0.45) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.45) 0%,
+      rgba(255, 255, 255, 0.15) 20%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.15) 80%,
+      rgba(255, 255, 255, 0.45) 100%);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -387,4 +463,82 @@
 ::-webkit-scrollbar-thumb {
   background: #20242E;
   border-radius: 3px;
+}
+
+/* Shared CreatorAI hero palette for every workspace theme. */
+.theme-wabi-sabi,
+.theme-sumi-clay,
+.theme-cinematic {
+  --color-bg-app: #090c09;
+  --color-bg-sidebar: #0b0f0b;
+  --color-bg-topbar: rgba(9, 12, 9, 0.9);
+  --color-bg-card: #111611;
+  --color-bg-card-elevated: #151c15;
+  --color-bg-card-hover: #1b2319;
+  --color-bg-input: #0c110c;
+  --color-border: rgba(205, 235, 178, 0.12);
+  --color-border-subtle: rgba(205, 235, 178, 0.08);
+  --color-border-active: #b9ed79;
+  --color-text-main: #eef3e8;
+  --color-text-muted: #a5b09b;
+  --color-text-faint: #75816e;
+  --color-accent-terracotta: #b9ed79;
+  --color-accent-matcha: #9cdb70;
+  --color-accent-stone: #eef3e8;
+  --color-accent-ochre: #d4e69b;
+  --clay-outer-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  --clay-card-inset: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  --clay-input-inset: inset 0 1px 4px rgba(0, 0, 0, 0.32);
+  --clay-button-shadow: 0 10px 28px rgba(157, 218, 103, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --clay-pill-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
+}
+
+.ceramic-matte-primary,
+.clay-button-primary {
+  background: linear-gradient(120deg, #e7ffba 0%, #c9f18a 46%, #91d96c 100%);
+  color: #10190d;
+  border-color: rgba(220, 255, 190, 0.5);
+  box-shadow: 0 12px 30px rgba(151, 213, 96, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.ceramic-matte-primary:hover,
+.clay-button-primary:hover {
+  box-shadow: 0 16px 36px rgba(151, 213, 96, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.ceramic-matte-secondary,
+.clay-button-secondary {
+  background: rgba(19, 25, 18, 0.82);
+  color: #e8f1dc;
+  border-color: rgba(185, 237, 121, 0.2);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.ceramic-matte-secondary:hover,
+.clay-button-secondary:hover {
+  background: rgba(28, 38, 24, 0.92);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.theme-wabi-sabi input[type='checkbox'],
+.theme-wabi-sabi input[type='range'],
+.theme-sumi-clay input[type='checkbox'],
+.theme-sumi-clay input[type='range'],
+.theme-cinematic input[type='checkbox'],
+.theme-cinematic input[type='range'] {
+  accent-color: #b9ed79 !important;
+}
+
+.theme-wabi-sabi [class*='text-cyan-'],
+.theme-sumi-clay [class*='text-cyan-'],
+.theme-cinematic [class*='text-cyan-'] {
+  color: var(--color-accent-terracotta) !important;
+}
+
+.theme-wabi-sabi [class*='border-cyan-'],
+.theme-sumi-clay [class*='border-cyan-'],
+.theme-cinematic [class*='border-cyan-'] {
+  border-color: var(--color-border-active) !important;
 }

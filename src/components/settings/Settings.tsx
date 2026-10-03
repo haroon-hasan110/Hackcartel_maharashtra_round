@@ -23,31 +23,31 @@ export const Settings: React.FC = () => {
     icon: string;
     swatches: string[];
   }[] = [
-    {
-      id: 'wabi-sabi',
-      name: 'Wabi-Sabi Clay',
-      sub: 'Warm Earth & Raw Linen',
-      description: 'Tactile, sculpted claymorphic cards with warm terracotta accents and organic paper tones.',
-      icon: '🏺',
-      swatches: ['#F5F1E9', '#E4DCD0', '#C86848'],
-    },
-    {
-      id: 'sumi-clay',
-      name: 'Sumi Stone',
-      sub: 'Warm Charcoal Stone & Tea',
-      description: 'Earthy, deep charcoal stone without harsh pitch-black darkness. Soothing on the eyes.',
-      icon: '🍵',
-      swatches: ['#1A1816', '#24211E', '#DF7D56'],
-    },
-    {
-      id: 'cinematic',
-      name: 'Midnight Slate',
-      sub: 'Clean Studio Dark',
-      description: 'Deep balanced graphite with cyan accents for focused late-night production.',
-      icon: '🎬',
-      swatches: ['#0F1218', '#151922', '#06B6D4'],
-    },
-  ];
+      {
+        id: 'wabi-sabi',
+        name: 'Hero Canopy',
+        sub: 'Obsidian & Lime',
+        description: 'Cinematic charcoal surfaces, soft glass details, and luminous lime accents.',
+        icon: '🏺',
+        swatches: ['#090C09', '#151C15', '#B9ED79'],
+      },
+      {
+        id: 'sumi-clay',
+        name: 'Moss Edit',
+        sub: 'Deep Green & Lime',
+        description: 'A quieter forest-leaning variation with low-glare surfaces and restrained lime accents.',
+        icon: '🍵',
+        swatches: ['#0B0F0B', '#1B2319', '#9CDB70'],
+      },
+      {
+        id: 'cinematic',
+        name: 'Night Cut',
+        sub: 'Cinematic Charcoal',
+        description: 'A near-black editing surface with softened contrast and pale botanical highlights.',
+        icon: '🎬',
+        swatches: ['#090C09', '#111611', '#D4E69B'],
+      },
+    ];
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 pb-20">
@@ -112,9 +112,8 @@ export const Settings: React.FC = () => {
                     setTheme(t.id);
                     showNotification(`Switched to ${t.name}`);
                   }}
-                  className={`p-3.5 rounded-2xl text-left transition-all active:scale-95 cursor-pointer flex flex-col justify-between ${
-                    isSelected ? 'clay-card-elevated shadow-md' : 'clay-card hover:opacity-90'
-                  }`}
+                  className={`p-3.5 rounded-2xl text-left transition-all active:scale-95 cursor-pointer flex flex-col justify-between ${isSelected ? 'clay-card-elevated shadow-md' : 'clay-card hover:opacity-90'
+                    }`}
                   style={{
                     backgroundColor: isSelected
                       ? 'var(--color-bg-card)'
@@ -222,7 +221,7 @@ export const Settings: React.FC = () => {
                 type="checkbox"
                 checked={strictLineage}
                 onChange={(e) => setStrictLineage(e.target.checked)}
-                className="mt-1 rounded w-4 h-4 cursor-pointer accent-orange-600"
+                className="mt-1 rounded w-4 h-4 cursor-pointer accent-lime-400"
               />
             </label>
 
@@ -247,7 +246,7 @@ export const Settings: React.FC = () => {
                 max="95"
                 value={retentionThreshold}
                 onChange={(e) => setRetentionThreshold(Number(e.target.value))}
-                className="w-full accent-orange-600 cursor-pointer"
+                className="w-full accent-lime-400 cursor-pointer"
               />
               <span
                 className="text-[10px] block mt-1"
@@ -326,7 +325,7 @@ export const Settings: React.FC = () => {
                 type="checkbox"
                 checked={autoBurnSubtitles}
                 onChange={(e) => setAutoBurnSubtitles(e.target.checked)}
-                className="mt-1 rounded w-4 h-4 cursor-pointer accent-orange-600"
+                className="mt-1 rounded w-4 h-4 cursor-pointer accent-lime-400"
               />
             </label>
           </div>

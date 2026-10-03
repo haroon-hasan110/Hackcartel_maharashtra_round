@@ -85,7 +85,7 @@ const LandingHero: React.FC = () => {
     hasStartedRef.current = true;
     const video = videoRef.current;
     if (video) {
-      video.play().catch(() => {});
+      video.play().catch(() => { });
       fadeTo(1, 500);
     }
   };
@@ -157,8 +157,8 @@ const LandingHero: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] overflow-hidden relative flex flex-col justify-between selection:bg-[#BF5C38]/20 selection:text-[#2A2420]">
-      {/* Background Video with atmospheric warm off-white blending */}
+    <div className="premium-hero-shell min-h-screen overflow-hidden relative flex flex-col justify-between selection:bg-[#C76E4F]/20 selection:text-[#231D1A]">
+      {/* Background Video with atmospheric premium blend */}
       <video
         ref={videoRef}
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260724_061251_5b1af666-7df5-4284-abea-a19a14d1cc10.mp4"
@@ -169,12 +169,13 @@ const LandingHero: React.FC = () => {
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnded}
         className="absolute inset-x-0 -top-[20.4%] w-full h-[120%] object-cover translate-y-[17%] pointer-events-none select-none z-0"
-        style={{ opacity: 0 }}
+        style={{ opacity: 0, filter: 'brightness(0.68) saturate(0.72) contrast(1.06) blur(0.2px)' }}
       />
 
-      {/* Atmospheric Off-White Ceramic Scrim & Paper Vignette */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#FAF7F2]/20 via-transparent to-[#FAF7F2]/45 pointer-events-none z-[1]" />
-      <div className="absolute inset-0 wabi-texture pointer-events-none z-[1] opacity-60" />
+      {/* Clean neutral vignette without fog */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),rgba(11,11,11,0.46)_48%,rgba(0,0,0,0.72)_100%)] pointer-events-none z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/10 via-transparent to-[#050505]/40 pointer-events-none z-[1]" />
+      <div className="absolute inset-0 wabi-texture pointer-events-none z-[1] opacity-20" />
 
       {/* Top Header Navigation Bar */}
       <motion.header
@@ -189,16 +190,16 @@ const LandingHero: React.FC = () => {
           title="Open Workspace"
         >
           <div
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-[#07170e] shadow-sm transition-transform group-hover:scale-105"
             style={{
-              backgroundColor: 'var(--color-accent-terracotta)',
-              boxShadow: '0 2px 8px rgba(191, 92, 56, 0.3)',
+              background: 'linear-gradient(135deg, #effec4 0%, #bce27d 42%, #8ad06a 100%)',
+              boxShadow: '0 0 18px rgba(162, 226, 104, 0.44)',
             }}
           >
             <Layers className="w-4 h-4 stroke-[2.2]" />
           </div>
           <div>
-            <span className="text-[#2A2420] font-semibold text-sm tracking-tight block leading-tight">
+            <span className="text-[#F0F5E9] font-semibold text-sm tracking-tight block leading-tight">
               CreatorAI
             </span>
           </div>
@@ -206,10 +207,16 @@ const LandingHero: React.FC = () => {
 
         <button
           onClick={() => navigateTo('dashboard')}
-          className="ceramic-matte-secondary px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95"
+          className="px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95 rounded-full border"
+          style={{
+            background: 'rgba(16, 20, 16, 0.45)',
+            borderColor: 'rgba(177, 226, 134, 0.38)',
+            boxShadow: '0 0 0 1px rgba(177, 226, 134, 0.15), 0 12px 24px rgba(0,0,0,0.18)',
+            color: '#eff8db',
+          }}
         >
           <span>Open Workspace</span>
-          <ArrowRight className="w-3.5 h-3.5" style={{ color: 'var(--color-accent-terracotta)' }} />
+          <ArrowRight className="w-3.5 h-3.5" style={{ color: '#d8f0a4' }} />
         </button>
       </motion.header>
 
@@ -222,51 +229,63 @@ const LandingHero: React.FC = () => {
           className="flex w-full max-w-[900px] flex-col items-center text-center translate-y-[2%] md:translate-y-[4%]"
         >
           {/* Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium border border-[#DFD6C8] bg-[#EFE8DC] text-[#6E6357] shadow-sm mb-5">
-            <span className="w-2 h-2 rounded-full bg-[#BF5C38] shadow-[0_0_6px_rgba(191,92,56,0.5)]" />
+          <div className="hero-badge inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono font-medium border border-[#b6d98b]/50 bg-[#0b120e]/60 text-[#e8f9c7] shadow-[0_0_20px_rgba(125,184,78,0.2)] mb-5">
+            <span className="w-2 h-2 rounded-full bg-[#c9ee88] shadow-[0_0_8px_rgba(201,238,136,0.8)]" />
             <span className="tracking-wider text-[11px] uppercase">AI CREATOR OPERATING SYSTEM</span>
           </div>
 
           {/* Main Heading: Tightly spaced, Instrument Serif typography */}
           <h1
             style={{ fontFamily: "'Instrument Serif', serif" }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#231F1C] tracking-tight leading-[0.92] md:leading-[0.9] mb-7 md:mb-8"
+            className="hero-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white tracking-tight leading-[0.92] md:leading-[0.9] mb-7 md:mb-8"
           >
             <span className="block">One recording.</span>
-            <span className="block text-[#BF5C38] italic font-normal">An entire content pipeline.</span>
+            <span className="block italic font-normal text-[#d5f3a5] drop-shadow-[0_0_24px_rgba(174,230,118,0.28)]">An entire content pipeline.</span>
           </h1>
 
           {/* Description */}
-          <p className="max-w-[680px] text-[#5C5248] text-base md:text-lg leading-relaxed px-4 font-normal mb-8">
+          <p className="hero-subtitle max-w-[680px] text-[#dfe9d3]/85 text-base md:text-lg leading-relaxed px-4 font-normal mb-8">
             CreatorAI understands your content, finds the moments that matter, and transforms
             one recording into editable content for every platform.
           </p>
 
           {/* CTA Group: Vertical Stack */}
           <div className="flex flex-col items-center gap-4">
-            {/* Primary CTA: Matte Ceramic Terracotta Button */}
+            {/* Primary CTA: Green glow pill */}
             <button
               onClick={() => navigateTo('upload')}
-              className="ceramic-matte-primary pl-6 pr-2 py-2 flex items-center gap-3.5 group cursor-pointer active:scale-[0.98] transition-all duration-200 focus:outline-none"
+              className="hero-cta-primary pl-6 pr-2 py-2 flex items-center gap-3.5 group cursor-pointer active:scale-[0.98] transition-all duration-200 focus:outline-none"
+              style={{
+                background: 'linear-gradient(115deg, rgba(231,255,186,0.92) 0%, rgba(208,242,135,0.86) 48%, rgba(140,217,106,0.82) 100%)',
+                color: '#07180e',
+                borderColor: 'rgba(240,255,220,0.72)',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.18), 0 24px 40px rgba(151, 213, 96, 0.28), inset 0 1px 0 rgba(255,255,255,0.78)',
+              }}
             >
-              <span className="text-white text-sm font-semibold tracking-wide">
+              <span className="text-sm font-bold tracking-wide" style={{ color: '#0d1d11' }}>
                 Start with your source
               </span>
-              <div className="bg-[#FAF7F2] rounded-full p-2.5 sm:p-3 text-[#BF5C38] group-hover:scale-105 active:scale-95 transition-transform duration-200 shadow-sm border border-[#E2D8CA]">
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              <div className="bg-[#f4fdf0] rounded-full p-2.5 sm:p-3 text-[#0f1e13] group-hover:scale-105 active:scale-95 transition-transform duration-200 shadow-sm border border-[#d8efb1]">
+                <ArrowRight className="hero-arrow-motion w-4 h-4 stroke-[2.5]" />
               </div>
             </button>
 
-            {/* Secondary CTA: Matte Ceramic Bisque Button */}
+            {/* Secondary CTA: dark translucent green border */}
             <button
               onClick={() => navigateTo('content-map')}
-              className="ceramic-matte-secondary px-8 py-3 text-xs sm:text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all focus:outline-none"
+              className="hero-cta-secondary px-8 py-3 text-xs sm:text-sm font-semibold cursor-pointer active:scale-[0.98] transition-all focus:outline-none border"
+              style={{
+                background: 'rgba(14, 19, 16, 0.36)',
+                borderColor: 'rgba(178, 226, 129, 0.3)',
+                color: '#edf8de',
+                boxShadow: '0 12px 26px rgba(0,0,0,0.16), inset 0 1px 1px rgba(255,255,255,0.1)',
+              }}
             >
               See how CreatorAI works
             </button>
 
             {/* Product Message / Principle */}
-            <p className="text-[#8A7D71] text-xs tracking-wide font-mono mt-1">
+            <p className="text-[#d2e9bb]/80 text-xs tracking-wide font-mono mt-1">
               AI suggests · Creator decides
             </p>
           </div>

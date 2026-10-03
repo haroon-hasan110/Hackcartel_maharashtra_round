@@ -35,28 +35,28 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
     icon: string;
     swatch: string[];
   }[] = [
-    {
-      id: 'wabi-sabi',
-      name: 'Wabi-Sabi Clay',
-      sub: 'Warm Earth & Linen',
-      icon: '🏺',
-      swatch: ['#F5F1E9', '#E4DCD0', '#C86848'],
-    },
-    {
-      id: 'sumi-clay',
-      name: 'Sumi Stone',
-      sub: 'Charcoal & Terracotta',
-      icon: '🍵',
-      swatch: ['#1A1816', '#24211E', '#DF7D56'],
-    },
-    {
-      id: 'cinematic',
-      name: 'Midnight Slate',
-      sub: 'Studio Dark',
-      icon: '🎬',
-      swatch: ['#0F1218', '#151922', '#06B6D4'],
-    },
-  ];
+      {
+        id: 'wabi-sabi',
+        name: 'Hero Canopy',
+        sub: 'Obsidian & Lime',
+        icon: '🏺',
+        swatch: ['#090C09', '#151C15', '#B9ED79'],
+      },
+      {
+        id: 'sumi-clay',
+        name: 'Moss Edit',
+        sub: 'Deep Green & Lime',
+        icon: '🍵',
+        swatch: ['#0B0F0B', '#1B2319', '#9CDB70'],
+      },
+      {
+        id: 'cinematic',
+        name: 'Night Cut',
+        sub: 'Cinematic Charcoal',
+        icon: '🎬',
+        swatch: ['#090C09', '#111611', '#D4E69B'],
+      },
+    ];
 
   const currentThemeObj = themeOptions.find((t) => t.id === theme) || themeOptions[0];
 
@@ -103,8 +103,8 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
               ·{' '}
               {activeProject.sourceVideo.duration
                 ? `${Math.floor(activeProject.sourceVideo.duration / 60)}:${String(
-                    activeProject.sourceVideo.duration % 60
-                  ).padStart(2, '0')}`
+                  activeProject.sourceVideo.duration % 60
+                ).padStart(2, '0')}`
                 : '08:42'}
             </span>
             <ChevronDown
@@ -146,7 +146,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
                     style={{
                       backgroundColor:
                         proj.id === activeProject.id
-                          ? 'rgba(200, 104, 72, 0.12)'
+                          ? 'rgba(185, 237, 121, 0.12)'
                           : 'transparent',
                       color:
                         proj.id === activeProject.id
@@ -272,7 +272,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
                       style={{
                         backgroundColor:
                           theme === opt.id
-                            ? 'rgba(200, 104, 72, 0.12)'
+                            ? 'rgba(185, 237, 121, 0.12)'
                             : 'transparent',
                       }}
                     >
