@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-serif: 'Instrument Serif', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #FAF7F2;
+    color: #2A2420;
+    overflow-x: hidden;
+  }
+}
+
+/* ==========================================================================
+   Claymorphism & Wabi-Sabi Theme Tokens
+   ========================================================================== */
+
+/* 1. Wabi-Sabi Clay (Warm Earth, Raw Linen & Terracotta) */
+.theme-wabi-sabi {
+  --color-bg-app: #FAF7F2;
+  --color-bg-sidebar: #ECE4D6;
+  --color-bg-topbar: rgba(250, 247, 242, 0.94);
+  --color-bg-card: #E7DFD2;
+  --color-bg-card-elevated: #EFE7DB;
+  --color-bg-card-hover: #EBE2D5;
+  --color-bg-input: #DFD7C8;
+  --color-border: rgba(120, 100, 80, 0.16);
+  --color-border-subtle: rgba(120, 100, 80, 0.10);
+  --color-border-active: #BF5C38;
+  --color-text-main: #2A2420;
+  --color-text-muted: #6C6258;
+  --color-text-faint: #988D82;
+  --color-accent-terracotta: #BF5C38;
+  --color-accent-matcha: #5E7558;
+  --color-accent-stone: #423B36;
+  --color-accent-ochre: #B88242;
+
+  /* Clay Shadows (Warm Sculpted Ceramics & Matte Touch) */
+  --clay-outer-shadow: 10px 14px 28px rgba(165, 145, 125, 0.18), -8px -8px 22px rgba(255, 255, 255, 0.9);
+  --clay-card-inset: inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -3px -3px 6px rgba(140, 120, 100, 0.12);
+  --clay-input-inset: inset 3px 3px 6px rgba(130, 110, 90, 0.18), inset -2px -2px 5px rgba(255, 255, 255, 0.85);
+  --clay-button-shadow: 0 4px 14px rgba(191, 92, 56, 0.28), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+  --clay-pill-shadow: 0 3px 10px rgba(150, 130, 110, 0.14), inset 0 1.5px 2px rgba(255, 255, 255, 0.8), inset 0 -1.5px 2px rgba(160, 140, 120, 0.12);
+}
+
+/* 2. Sumi Clay (Warm Charcoal Stone, Tea & Terracotta) */
+.theme-sumi-clay {
+  --color-bg-app: #1A1816;
+  --color-bg-sidebar: #151312;
+  --color-bg-topbar: rgba(26, 24, 22, 0.92);
+  --color-bg-card: #24211E;
+  --color-bg-card-elevated: #2C2825;
+  --color-bg-card-hover: #2E2A27;
+  --color-bg-input: #1D1B18;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-border-active: #DF7D56;
+  --color-text-main: #EFE8DE;
+  --color-text-muted: #A89F93;
+  --color-text-faint: #736B61;
+  --color-accent-terracotta: #DF7D56;
+  --color-accent-matcha: #8CA381;
+  --color-accent-stone: #EFE8DE;
+  --color-accent-ochre: #CFA055;
+
+  /* Clay Shadows (Dark Tactile Stone) */
+  --clay-outer-shadow: 10px 14px 30px rgba(0, 0, 0, 0.55), -4px -4px 14px rgba(255, 255, 255, 0.04);
+  --clay-card-inset: inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.08), inset -2px -2px 5px rgba(0, 0, 0, 0.4);
+  --clay-input-inset: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.05);
+  --clay-button-shadow: 4px 6px 16px rgba(223, 125, 86, 0.3), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.35), inset -2px -2px 3px rgba(0, 0, 0, 0.3);
+  --clay-pill-shadow: 3px 4px 12px rgba(0, 0, 0, 0.35), inset 1px 1px 2px rgba(255, 255, 255, 0.06), inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* 3. Midnight Slate (Balanced Dark Studio) */
+.theme-cinematic {
+  --color-bg-app: #0F1218;
+  --color-bg-sidebar: #0A0D12;
+  --color-bg-topbar: rgba(15, 18, 24, 0.92);
+  --color-bg-card: #151922;
+  --color-bg-card-elevated: #1B212D;
+  --color-bg-card-hover: #1E2533;
+  --color-bg-input: #10141B;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-border-active: #06B6D4;
+  --color-text-main: #F3F4F6;
+  --color-text-muted: #9CA3AF;
+  --color-text-faint: #6B7280;
+  --color-accent-terracotta: #06B6D4;
+  --color-accent-matcha: #10B981;
+  --color-accent-stone: #E5E7EB;
+  --color-accent-ochre: #F59E0B;
+
+  /* Clay Shadows (Slate Studio) */
+  --clay-outer-shadow: 10px 14px 30px rgba(0, 0, 0, 0.6), -4px -4px 14px rgba(255, 255, 255, 0.03);
+  --clay-card-inset: inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.06), inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+  --clay-input-inset: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -1.5px -1.5px 3px rgba(255, 255, 255, 0.04);
+  --clay-button-shadow: 4px 6px 16px rgba(6, 182, 212, 0.3), inset 1.5px 1.5px 3px rgba(255, 255, 255, 0.3), inset -2px -2px 3px rgba(0, 0, 0, 0.3);
+  --clay-pill-shadow: 3px 4px 12px rgba(0, 0, 0, 0.4), inset 1px 1px 2px rgba(255, 255, 255, 0.05), inset -1px -1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Claymorphic Utility Classes */
+.clay-card {
+  background-color: var(--color-bg-card);
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 1.25rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-card-elevated {
+  background-color: var(--color-bg-card-elevated);
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.clay-input {
+  background-color: var(--color-bg-input);
+  box-shadow: var(--clay-input-inset);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-text-main);
+  border-radius: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.clay-input:focus {
+  border-color: var(--color-border-active);
+  outline: none;
+}
+
+/* Ceramic Buttons with Tactile Matte Touch */
+.ceramic-matte-primary,
+.clay-button-primary {
+  background: linear-gradient(180deg, #D46F4C 0%, #BF5C38 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(160, 65, 35, 0.45);
+  box-shadow: 
+    0 4px 14px rgba(191, 92, 56, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+  border-radius: 9999px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  user-select: none;
+}
+
+.ceramic-matte-primary:hover,
+.clay-button-primary:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 18px rgba(191, 92, 56, 0.34),
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    inset 0 1.5px 1.5px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+}
+
+.ceramic-matte-primary:active,
+.clay-button-primary:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 
+    0 2px 6px rgba(191, 92, 56, 0.2),
+    inset 0 2px 4px rgba(90, 30, 12, 0.3);
+}
+
+.ceramic-matte-secondary,
+.clay-button-secondary {
+  background-color: var(--color-bg-card-elevated, #EFE7DB);
+  color: var(--color-text-main, #2A2420);
+  border: 1px solid rgba(185, 170, 150, 0.45);
+  box-shadow: 
+    0 3px 10px rgba(150, 130, 110, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.85),
+    inset 0 -1.5px 2px rgba(160, 140, 120, 0.12);
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  user-select: none;
+}
+
+.ceramic-matte-secondary:hover,
+.clay-button-secondary:hover {
+  background-color: var(--color-bg-card-hover, #EBE2D5);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 5px 14px rgba(150, 130, 110, 0.2),
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+}
+
+.ceramic-matte-secondary:active,
+.clay-button-secondary:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 
+    0 1px 3px rgba(150, 130, 110, 0.1),
+    inset 0 2px 4px rgba(150, 130, 110, 0.25);
+}
+
+.ceramic-matte-chip,
+.clay-chip {
+  box-shadow: 
+    0 2px 8px rgba(150, 130, 110, 0.12),
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.75),
+    inset 0 -1px 1.5px rgba(160, 140, 120, 0.1);
+  border: 1px solid rgba(185, 170, 150, 0.4);
+  transition: all 0.2s ease;
+}
+
+/* Wabi-Sabi Touches */
+.wabi-font-serif {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+.wabi-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  padding: 2px 7px;
+  border: 1px solid var(--color-accent-terracotta);
+  color: var(--color-accent-terracotta);
+  background: rgba(200, 104, 72, 0.08);
+}
+
+/* Organic Paper Texture Feel */
+.wabi-texture {
+  background-image: radial-gradient(rgba(140, 120, 100, 0.05) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* ==========================================================================
+   Wabi-Sabi & Claymorphism Workspace Transformations
+   ========================================================================== */
+
+/* Wabi-Sabi Clay (Warm Earth & Linen) */
+.theme-wabi-sabi {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
+}
+
+.theme-wabi-sabi [class*="bg-[#0D1017]"],
+.theme-wabi-sabi [class*="bg-[#0C0E15]"],
+.theme-wabi-sabi [class*="bg-[#0C0E16]"],
+.theme-wabi-sabi [class*="bg-[#0F131D]"],
+.theme-wabi-sabi [class*="bg-[#07090E]"],
+.theme-wabi-sabi [class*="bg-[#07090F]"],
+.theme-wabi-sabi [class*="bg-[#080B10]"],
+.theme-wabi-sabi [class*="bg-[#10131C]"],
+.theme-wabi-sabi [class*="bg-[#12151E]"],
+.theme-wabi-sabi [class*="bg-[#141824]"],
+.theme-wabi-sabi [class*="bg-neutral-900"],
+.theme-wabi-sabi [class*="bg-neutral-950"] {
+  background-color: var(--color-bg-card-elevated) !important;
+  color: var(--color-text-main);
+  border-color: var(--color-border-subtle) !important;
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border-radius: 1.25rem;
+}
+
+.theme-wabi-sabi [class*="text-white"] {
+  color: var(--color-text-main) !important;
+}
+
+.theme-wabi-sabi [class*="text-neutral-200"],
+.theme-wabi-sabi [class*="text-neutral-300"],
+.theme-wabi-sabi [class*="text-neutral-400"] {
+  color: var(--color-text-muted) !important;
+}
+
+.theme-wabi-sabi [class*="text-cyan-400"],
+.theme-wabi-sabi [class*="text-cyan-300"] {
+  color: var(--color-accent-terracotta) !important;
+}
+
+.theme-wabi-sabi [class*="bg-cyan-400"],
+.theme-wabi-sabi [class*="bg-cyan-500"] {
+  background-color: var(--color-accent-terracotta) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--clay-button-shadow) !important;
+  border-radius: 9999px;
+}
+
+.theme-wabi-sabi [class*="border-cyan-500"] {
+  border-color: var(--color-accent-terracotta) !important;
+}
+
+/* Sumi Stone (Warm Charcoal & Terracotta) */
+.theme-sumi-clay {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
+}
+
+.theme-sumi-clay [class*="bg-[#0D1017]"],
+.theme-sumi-clay [class*="bg-[#0C0E15]"],
+.theme-sumi-clay [class*="bg-[#0C0E16]"],
+.theme-sumi-clay [class*="bg-[#0F131D]"],
+.theme-sumi-clay [class*="bg-[#07090E]"],
+.theme-sumi-clay [class*="bg-[#07090F]"],
+.theme-sumi-clay [class*="bg-[#080B10]"],
+.theme-sumi-clay [class*="bg-[#10131C]"],
+.theme-sumi-clay [class*="bg-[#12151E]"],
+.theme-sumi-clay [class*="bg-[#141824]"],
+.theme-sumi-clay [class*="bg-neutral-900"],
+.theme-sumi-clay [class*="bg-neutral-950"] {
+  background-color: var(--color-bg-card-elevated) !important;
+  border-color: var(--color-border-subtle) !important;
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border-radius: 1.25rem;
+}
+
+.theme-sumi-clay [class*="text-cyan-400"],
+.theme-sumi-clay [class*="text-cyan-300"] {
+  color: var(--color-accent-terracotta) !important;
+}
+
+.theme-sumi-clay [class*="bg-cyan-400"],
+.theme-sumi-clay [class*="bg-cyan-500"] {
+  background-color: var(--color-accent-terracotta) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--clay-button-shadow) !important;
+  border-radius: 9999px;
+}
+
+.theme-sumi-clay [class*="border-cyan-500"] {
+  border-color: var(--color-accent-terracotta) !important;
+}
+
+/* Liquid Glass specification */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #20242E;
+  border-radius: 3px;
+}

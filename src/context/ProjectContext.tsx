@@ -1,0 +1,274 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Project, ClipCandidate, ContentAnalysis, GeneratedAsset } from '../types/project';
+import { mockProjects } from '../data/mockProjects';
+import { mockAssets } from '../data/mockAssets';
+import { mockAiAgentsClips } from '../data/mockAnalysis';
+import { api } from '../services/api';
+
+export type AppRoute =
+  | 'landing'
+  | 'dashboard'
+  | 'projects'
+  | 'upload'
+  | 'processing'
+  | 'content-map'
+  | 'studio'
+  | 'repurpose'
+  | 'assets'
+  | 'settings'
+  | 'project-detail';
+
+export type ColorTheme = 'wabi-sabi' | 'sumi-clay' | 'cinematic';
+
+interface ProjectContextType {
+  currentRoute: AppRoute;
+  navigateTo: (route: AppRoute, projectId?: string, clipId?: string) => void;
+  // Theme & Aesthetics
+  theme: ColorTheme;
+  setTheme: (theme: ColorTheme) => void;
+  cycleTheme: () => void;
+  projects: Project[];
+  activeProject: Project;
+  selectProject: (projectId: string) => void;
+  activeClip: ClipCandidate;
+  setActiveClip: (clip: ClipCandidate) => void;
+  updateActiveClip: (updates: Partial<ClipCandidate>) => void;
+  generateClip: (clipId: string) => Promise<void>;
+  generatingClips: Record<string, boolean>;
+  assets: GeneratedAsset[];
+  // Export Drawer/Modal
+  isExportOpen: boolean;
+  exportItem: ClipCandidate | GeneratedAsset | null;
+  openExport: (item?: ClipCandidate | GeneratedAsset) => void;
+  closeExport: () => void;
+  // Upload & Process
+  pendingUpload: {
+    file?: File;
+    objectUrl?: string;
+    title: string;
+    scriptText: string;
+    contentType: Project['contentType'];
+  } | null;
+  setPendingUpload: (upload: any) => void;
+  startAnalysis: (uploadData: any) => Promise<void>;
+  // Global Notification
+  notification: string | null;
+  showNotification: (msg: string) => void;
+}
+
+const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+
+export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>('landing');
+  const [theme, setThemeState] = useState<ColorTheme>(() => {
+    const saved = localStorage.getItem('creatorai_theme');
+    if (saved === 'wabi-sabi' || saved === 'sumi-clay' || saved === 'cinematic') {
+      return saved as ColorTheme;
+    }
+    return 'wabi-sabi';
+  });
+
+  const setTheme = (newTheme: ColorTheme) => {
+    setThemeState(newTheme);
+    localStorage.setItem('creatorai_theme', newTheme);
+  };
+
+  const cycleTheme = () => {
+    setThemeState((curr) => {
+      let next: ColorTheme = 'wabi-sabi';
+      if (curr === 'wabi-sabi') next = 'sumi-clay';
+      else if (curr === 'sumi-clay') next = 'cinematic';
+      else next = 'wabi-sabi';
+      localStorage.setItem('creatorai_theme', next);
+      return next;
+    });
+  };
+
+  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const [activeProjectId, setActiveProjectId] = useState<string>(mockProjects[0].id);
+  const [activeClip, setActiveClip] = useState<ClipCandidate>(mockAiAgentsClips[0]);
+  const [generatingClips, setGeneratingClips] = useState<Record<string, boolean>>({});
+  const [assets, setAssets] = useState<GeneratedAsset[]>(mockAssets);
+
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [exportItem, setExportItem] = useState<ClipCandidate | GeneratedAsset | null>(null);
+
+  const [pendingUpload, setPendingUpload] = useState<{
+    file?: File;
+    objectUrl?: string;
+    title: string;
+    scriptText: string;
+    contentType: Project['contentType'];
+  } | null>(null);
+
+  const [notification, setNotification] = useState<string | null>(null);
+
+  const activeProject =
+    projects.find((p) => p.id === activeProjectId) || projects[0];
+
+  const showNotification = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => {
+      setNotification((curr) => (curr === msg ? null : curr));
+    }, 3500);
+  };
+
+  const navigateTo = (route: AppRoute, projectId?: string, clipId?: string) => {
+    if (projectId) {
+      setActiveProjectId(projectId);
+    }
+    if (clipId) {
+      const match = activeProject.analysis?.clipOpportunities.find((c) => c.id === clipId);
+      if (match) setActiveClip(match);
+    }
+    setCurrentRoute(route);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const selectProject = (projectId: string) => {
+    setActiveProjectId(projectId);
+    const p = projects.find((x) => x.id === projectId);
+    if (p?.analysis?.clipOpportunities?.[0]) {
+      setActiveClip(p.analysis.clipOpportunities[0]);
+    }
+  };
+
+  const updateActiveClip = (updates: Partial<ClipCandidate>) => {
+    setActiveClip((prev) => {
+      const updated = { ...prev, ...updates };
+      // Also update in project analysis if present
+      setProjects((prevProjects) =>
+        prevProjects.map((proj) => {
+          if (proj.id !== activeProject.id || !proj.analysis) return proj;
+          return {
+            ...proj,
+            analysis: {
+              ...proj.analysis,
+              clipOpportunities: proj.analysis.clipOpportunities.map((c) =>
+                c.id === updated.id ? updated : c
+              ),
+            },
+          };
+        })
+      );
+      return updated;
+    });
+  };
+
+  const generateClip = async (clipId: string) => {
+    setGeneratingClips((prev) => ({ ...prev, [clipId]: true }));
+    try {
+      const result = await api.generateClip(clipId);
+      setProjects((prevProjects) =>
+        prevProjects.map((proj) => {
+          if (proj.id !== activeProject.id || !proj.analysis) return proj;
+          return {
+            ...proj,
+            generatedClipsCount: proj.generatedClipsCount + 1,
+            analysis: {
+              ...proj.analysis,
+              clipOpportunities: proj.analysis.clipOpportunities.map((c) =>
+                c.id === clipId ? { ...c, status: 'generated' } : c
+              ),
+            },
+          };
+        })
+      );
+      if (activeClip.id === clipId) {
+        setActiveClip((prev) => ({ ...prev, status: 'generated' }));
+      }
+      showNotification(`Clip "${result.title}" compiled successfully`);
+    } catch (e) {
+      showNotification('Failed to generate clip');
+    } finally {
+      setGeneratingClips((prev) => ({ ...prev, [clipId]: false }));
+    }
+  };
+
+  const startAnalysis = async (uploadData: any) => {
+    setCurrentRoute('processing');
+    const newProj = await api.createProject({
+      title: uploadData.title || (uploadData.file?.name ? uploadData.file.name.replace(/\.[^/.]+$/, '') : 'New Content Pipeline'),
+      contentType: uploadData.contentType || 'podcast',
+      sourceFile: uploadData.file,
+      sourceUrl: uploadData.objectUrl,
+      scriptText: uploadData.scriptText,
+      durationSeconds: 522,
+    });
+
+    setProjects((prev) => [newProj, ...prev]);
+    setActiveProjectId(newProj.id);
+
+    // AI Analysis simulation will complete and update project
+    setTimeout(async () => {
+      const analysis = await api.analyzeProject(newProj.id);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === newProj.id ? { ...p, analysis, status: 'analyzed' } : p))
+      );
+      if (analysis.clipOpportunities?.[0]) {
+        setActiveClip(analysis.clipOpportunities[0]);
+      }
+      setCurrentRoute('content-map');
+      showNotification('Pipeline compiled: Content Map is ready');
+    }, 4500);
+  };
+
+  const openExport = (item?: ClipCandidate | GeneratedAsset) => {
+    setExportItem(item || activeClip);
+    setIsExportOpen(true);
+  };
+
+  const closeExport = () => {
+    setIsExportOpen(false);
+    setExportItem(null);
+  };
+
+  // Clean up object URLs on unmount
+  useEffect(() => {
+    return () => {
+      if (pendingUpload?.objectUrl) {
+        URL.revokeObjectURL(pendingUpload.objectUrl);
+      }
+    };
+  }, [pendingUpload]);
+
+  return (
+    <ProjectContext.Provider
+      value={{
+        currentRoute,
+        navigateTo,
+        theme,
+        setTheme,
+        cycleTheme,
+        projects,
+        activeProject,
+        selectProject,
+        activeClip,
+        setActiveClip,
+        updateActiveClip,
+        generateClip,
+        generatingClips,
+        assets,
+        isExportOpen,
+        exportItem,
+        openExport,
+        closeExport,
+        pendingUpload,
+        setPendingUpload,
+        startAnalysis,
+        notification,
+        showNotification,
+      }}
+    >
+      {children}
+    </ProjectContext.Provider>
+  );
+};
+
+export const useProject = () => {
+  const context = useContext(ProjectContext);
+  if (!context) {
+    throw new Error('useProject must be used within a ProjectProvider');
+  }
+  return context;
+};

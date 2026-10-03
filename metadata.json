@@ -1,0 +1,6 @@
+{
+  "name": "CreatorAI",
+  "description": "AI-Powered Creator Operating Platform. One recording. An entire content pipeline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
