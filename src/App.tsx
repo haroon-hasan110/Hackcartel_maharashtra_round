@@ -14,6 +14,7 @@ import { CreatorStudio } from './components/studio/CreatorStudio';
 import { Repurpose } from './components/repurpose/Repurpose';
 import { Assets } from './components/assets/Assets';
 import { Settings } from './components/settings/Settings';
+import { supabase } from './lib/supabase';
 
 // ============================================================================
 // Cinematic Landing Page Hero
@@ -30,6 +31,7 @@ const LandingHero: React.FC = () => {
   const [dragProgress, setDragProgress] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const sliderTrackRef = useRef<HTMLDivElement | null>(null);
   const dragStartXRef = useRef(0);
   const dragBaseRef = useRef(0);
@@ -40,6 +42,28 @@ const LandingHero: React.FC = () => {
     setTimeout(() => {
       setNotification((curr) => (curr === msg ? null : curr));
     }, 2800);
+  };
+
+  const handleGoogleLogin = async () => {
+    if (!supabase) {
+      showNotification('Google auth is not enabled yet');
+      return;
+    }
+
+    setAuthLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    });
+
+    if (error) {
+      console.error('Google sign-in failed:', error);
+      showNotification('Google auth is not enabled in Supabase');
+    }
+
+    setAuthLoading(false);
   };
 
   const clamp = (value: number, min: number, max: number) =>
@@ -230,19 +254,35 @@ const LandingHero: React.FC = () => {
           </div>
         </button>
 
-        <button
-          onClick={() => navigateTo('dashboard')}
-          className="px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95 rounded-full border"
-          style={{
-            background: 'rgba(16, 20, 16, 0.45)',
-            borderColor: 'rgba(177, 226, 134, 0.38)',
-            boxShadow: '0 0 0 1px rgba(177, 226, 134, 0.15), 0 12px 24px rgba(0,0,0,0.18)',
-            color: '#eff8db',
-          }}
-        >
-          <span>Open Workspace</span>
-          <ArrowRight className="w-3.5 h-3.5" style={{ color: '#d8f0a4' }} />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleGoogleLogin}
+            disabled={authLoading}
+            className="px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95 rounded-full border"
+            style={{
+              background: 'rgba(16, 20, 16, 0.45)',
+              borderColor: 'rgba(177, 226, 134, 0.38)',
+              boxShadow: '0 0 0 1px rgba(177, 226, 134, 0.15), 0 12px 24px rgba(0,0,0,0.18)',
+              color: '#eff8db',
+            }}
+          >
+            <span>{authLoading ? 'Connecting...' : 'Continue with Google'}</span>
+          </button>
+
+          <button
+            onClick={() => navigateTo('dashboard')}
+            className="px-4 py-2 text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all active:scale-95 rounded-full border"
+            style={{
+              background: 'rgba(16, 20, 16, 0.45)',
+              borderColor: 'rgba(177, 226, 134, 0.38)',
+              boxShadow: '0 0 0 1px rgba(177, 226, 134, 0.15), 0 12px 24px rgba(0,0,0,0.18)',
+              color: '#eff8db',
+            }}
+          >
+            <span>Open Workspace</span>
+            <ArrowRight className="w-3.5 h-3.5" style={{ color: '#d8f0a4' }} />
+          </button>
+        </div>
       </motion.header>
 
       {/* Hero Content Section: Vertically balanced around 50%-55% viewport height */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Menu,
   ChevronDown,
@@ -6,8 +6,11 @@ import {
   Bell,
   Check,
   Sparkles,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { useProject, ColorTheme } from '../../context/ProjectContext';
+import { supabase } from '../../lib/supabase';
 
 interface TopBarProps {
   onToggleMobile: () => void;
@@ -27,6 +30,53 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [authUser, setAuthUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(false);
+
+  useEffect(() => {
+    if (!supabase) return;
+
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setAuthUser(data.session?.user ?? null);
+    };
+
+    loadSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthUser(session?.user ?? null);
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleGoogleLogin = async () => {
+    if (!supabase) return;
+
+    setAuthLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    });
+
+    if (error) {
+      console.error('Google sign-in failed:', error);
+    }
+
+    setAuthLoading(false);
+  };
+
+  const handleSignOut = async () => {
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    setAuthUser(null);
+  };
+
+  const avatarUrl = authUser?.user_metadata?.avatar_url || '/src/assets/images/avatar_creator_1791027561231.jpg';
 
   const themeOptions: {
     id: ColorTheme;
@@ -302,6 +352,29 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
           )}
         </div>
 
+        {authUser ? (
+          <button
+            onClick={handleSignOut}
+            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer clay-chip"
+            style={{
+              backgroundColor: 'var(--color-bg-card-elevated)',
+              color: 'var(--color-text-main)',
+            }}
+          >
+            <span className="text-[10px] uppercase tracking-[0.18em] text-[var(--color-text-muted)]">Signed in</span>
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
+        ) : (
+          <button
+            onClick={handleGoogleLogin}
+            disabled={authLoading}
+            className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all active:scale-95 cursor-pointer clay-button-primary"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{authLoading ? 'Connecting...' : 'Continue with Google'}</span>
+          </button>
+        )}
+
         {/* Primary Export CTA */}
         <button
           onClick={() => openExport()}
@@ -374,7 +447,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
           style={{ borderColor: 'var(--color-border-subtle)' }}
         >
           <img
-            src="/src/assets/images/avatar_creator_1791027561231.jpg"
+            src={avatarUrl}
             alt="Creator Avatar"
             referrerPolicy="no-referrer"
             className="w-7 h-7 rounded-full object-cover ring-2"
