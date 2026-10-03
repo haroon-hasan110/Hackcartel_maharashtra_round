@@ -156,6 +156,26 @@ const LandingHero: React.FC = () => {
     };
   }, []);
 
+  return (
+    <div className="min-h-screen bg-[#FAF7F2] overflow-hidden relative flex flex-col justify-between selection:bg-[#BF5C38]/20 selection:text-[#2A2420]">
+      {/* Background Video with atmospheric warm off-white blending */}
+      <video
+        ref={videoRef}
+        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260724_061251_5b1af666-7df5-4284-abea-a19a14d1cc10.mp4"
+        playsInline
+        muted
+        autoPlay
+        onCanPlay={handleCanPlay}
+        onTimeUpdate={handleTimeUpdate}
+        onEnded={handleEnded}
+        className="absolute inset-x-0 -top-[20.4%] w-full h-[120%] object-cover translate-y-[17%] pointer-events-none select-none z-0"
+        style={{ opacity: 0 }}
+      />
+
+      {/* Atmospheric Off-White Ceramic Scrim & Paper Vignette */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#FAF7F2]/20 via-transparent to-[#FAF7F2]/45 pointer-events-none z-[1]" />
+      <div className="absolute inset-0 wabi-texture pointer-events-none z-[1] opacity-60" />
+
       {/* Top Header Navigation Bar */}
       <motion.header
         initial={{ opacity: 0, y: -10 }}
