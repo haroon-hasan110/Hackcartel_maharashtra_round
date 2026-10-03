@@ -128,8 +128,8 @@ export const CreatorStudio: React.FC = () => {
                         <span
                             className="text-xs font-mono font-medium px-2 py-0.5 rounded-lg border"
                             style={{
-                                backgroundColor: 'rgba(255,255,255,0.12)',
-                                borderColor: 'rgba(120,103,90,0.16)',
+                                backgroundColor: 'var(--color-bg-card-hover)',
+                                borderColor: 'var(--color-border-subtle)',
                                 color: 'var(--color-accent-terracotta)',
                             }}
                         >
@@ -158,8 +158,8 @@ export const CreatorStudio: React.FC = () => {
                         onClick={() => openExport(activeClip)}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors border"
                         style={{
-                            backgroundColor: 'rgba(255,255,255,0.1)',
-                            borderColor: 'rgba(120,103,90,0.16)',
+                            backgroundColor: 'var(--color-bg-card-hover)',
+                            borderColor: 'var(--color-border-subtle)',
                             color: 'var(--color-text-main)',
                         }}
                     >
@@ -189,8 +189,8 @@ export const CreatorStudio: React.FC = () => {
                                     onClick={() => setActiveClip(clip)}
                                     className={`p-3 rounded-2xl border cursor-pointer transition-all text-xs ${isSelected ? 'shadow-sm' : ''}`}
                                     style={{
-                                        backgroundColor: isSelected ? 'rgba(255,255,255,0.14)' : 'rgba(255,255,255,0.08)',
-                                        borderColor: isSelected ? 'rgba(185,237,121,0.4)' : 'var(--color-border-subtle)',
+                                        backgroundColor: isSelected ? 'var(--color-bg-card)' : 'var(--color-bg-card-hover)',
+                                        borderColor: isSelected ? 'var(--color-border-active)' : 'var(--color-border-subtle)',
                                     }}
                                 >
                                     <div className="flex items-center justify-between text-[11px] mb-1" style={{ color: 'var(--color-text-muted)' }}>
@@ -213,8 +213,8 @@ export const CreatorStudio: React.FC = () => {
                     <div
                         className="p-3.5 rounded-2xl border text-[11px] space-y-1"
                         style={{
-                            backgroundColor: 'rgba(255,255,255,0.08)',
-                            borderColor: 'rgba(120,103,90,0.16)',
+                            backgroundColor: 'var(--color-bg-card-hover)',
+                            borderColor: 'var(--color-border-subtle)',
                             color: 'var(--color-text-muted)',
                         }}
                     >
@@ -224,9 +224,9 @@ export const CreatorStudio: React.FC = () => {
                         <p className="truncate font-mono" style={{ color: 'var(--color-text-main)' }}>
                             {activeProject.sourceVideo.filename}
                         </p>
-                        <div className="mt-1 flex items-center justify-between pt-1 border-t" style={{ borderColor: 'rgba(120,103,90,0.14)' }}>
+                        <div className="mt-1 flex items-center justify-between pt-1 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
                             <span>{formatSeconds(activeProject.sourceVideo.duration)} total</span>
-                            <span className="font-mono" style={{ color: '#497d58' }}>Synchronized</span>
+                            <span className="font-mono" style={{ color: 'var(--color-accent-terracotta)' }}>Synchronized</span>
                         </div>
                     </div>
                 </div>
@@ -235,8 +235,8 @@ export const CreatorStudio: React.FC = () => {
                     <div
                         className="p-3.5 rounded-2xl border flex flex-col items-center justify-center min-h-[440px] relative overflow-hidden"
                         style={{
-                            backgroundColor: 'rgba(22, 17, 14, 0.92)',
-                            borderColor: 'rgba(120,103,90,0.18)',
+                            backgroundColor: 'var(--color-bg-card-elevated)',
+                            borderColor: 'var(--color-border-subtle)',
                         }}
                     >
                         <div className="w-full flex items-center justify-between mb-2.5 text-xs px-1">
@@ -251,16 +251,16 @@ export const CreatorStudio: React.FC = () => {
                                         }}
                                         className="px-2.5 py-0.5 rounded text-[11px] font-mono transition-colors border"
                                         style={{
-                                            backgroundColor: aspectRatio === ratio ? 'rgba(185,237,121,0.14)' : 'rgba(255,255,255,0.06)',
-                                            borderColor: aspectRatio === ratio ? 'rgba(185,237,121,0.45)' : 'rgba(255,255,255,0.06)',
-                                            color: aspectRatio === ratio ? 'var(--color-accent-terracotta)' : '#d1c8ba',
+                                            backgroundColor: aspectRatio === ratio ? 'var(--color-accent-soft)' : 'var(--color-bg-card-hover)',
+                                            borderColor: aspectRatio === ratio ? 'var(--color-border-active)' : 'var(--color-border-subtle)',
+                                            color: aspectRatio === ratio ? 'var(--color-accent-terracotta)' : 'var(--color-text-main)',
                                         }}
                                     >
                                         {ratio}
                                     </button>
                                 ))}
                             </div>
-                            <span className="text-[10px] font-mono" style={{ color: '#d1c8ba' }}>
+                            <span className="text-[10px] font-mono" style={{ color: 'var(--color-text-muted)' }}>
                                 {aspectRatio === '9:16' ? 'Reels / Shorts' : aspectRatio === '1:1' ? 'Square Feed' : 'Landscape'}
                             </span>
                         </div>
@@ -268,8 +268,8 @@ export const CreatorStudio: React.FC = () => {
                         <div
                             className={`relative rounded-lg overflow-hidden border shadow-2xl transition-all duration-300 ${getPlayerContainerStyle()}`}
                             style={{
-                                backgroundColor: '#120f0e',
-                                borderColor: 'rgba(255,255,255,0.08)',
+                                backgroundColor: 'var(--color-bg-input)',
+                                borderColor: 'var(--color-border-subtle)',
                             }}
                         >
                             <img
@@ -281,7 +281,7 @@ export const CreatorStudio: React.FC = () => {
 
                             <div
                                 className="absolute top-6 inset-x-4 p-2.5 rounded-md bg-black/80 backdrop-blur-md border text-center shadow-lg"
-                                style={{ borderColor: 'rgba(255,255,255,0.10)' }}
+                                style={{ borderColor: 'var(--color-border-subtle)' }}
                             >
                                 <span className="text-[10px] uppercase font-bold block mb-0.5 tracking-wider" style={{ color: 'var(--color-accent-terracotta)' }}>
                                     HOOK PREVIEW
@@ -290,7 +290,7 @@ export const CreatorStudio: React.FC = () => {
                             </div>
 
                             <div className="absolute bottom-6 inset-x-4 p-2 rounded-md bg-black/80 backdrop-blur-sm text-center">
-                                <p className="text-[11px] font-medium leading-tight" style={{ color: '#d9efb2' }}>
+                                <p className="text-[11px] font-medium leading-tight" style={{ color: 'var(--color-accent-terracotta)' }}>
                                     {activeClip.transcriptExcerpt.slice(0, 75)}...
                                 </p>
                             </div>
@@ -301,7 +301,7 @@ export const CreatorStudio: React.FC = () => {
                             >
                                 <div
                                     className="w-12 h-12 rounded-full bg-black/70 border flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-xl"
-                                    style={{ borderColor: 'rgba(255,255,255,0.25)' }}
+                                    style={{ borderColor: 'var(--color-border)' }}
                                 >
                                     {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
                                 </div>
@@ -309,7 +309,7 @@ export const CreatorStudio: React.FC = () => {
 
                             <div
                                 className="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-black/85 font-mono text-[9px] border"
-                                style={{ color: '#d7d2cb', borderColor: 'rgba(255,255,255,0.08)' }}
+                                style={{ color: 'var(--color-text-main)', borderColor: 'var(--color-border-subtle)' }}
                             >
                                 {formatSeconds(currentPlayTime)} / {formatSeconds(endTime)}
                             </div>
@@ -319,8 +319,8 @@ export const CreatorStudio: React.FC = () => {
                     <div
                         className="p-4 rounded-2xl border space-y-3"
                         style={{
-                            backgroundColor: 'rgba(255,255,255,0.08)',
-                            borderColor: 'rgba(120,103,90,0.16)',
+                            backgroundColor: 'var(--color-bg-card-hover)',
+                            borderColor: 'var(--color-border-subtle)',
                         }}
                     >
                         <div className="flex items-center justify-between text-xs">
@@ -336,15 +336,15 @@ export const CreatorStudio: React.FC = () => {
                         <div className="relative pt-2 pb-1">
                             <div
                                 className="h-6 rounded border relative flex items-center overflow-hidden"
-                                style={{ backgroundColor: 'rgba(10,8,7,0.9)', borderColor: 'rgba(255,255,255,0.08)' }}
+                                style={{ backgroundColor: 'var(--color-bg-input)', borderColor: 'var(--color-border-subtle)' }}
                             >
                                 <div
                                     className="absolute top-0 bottom-0 border-l-2 border-r-2"
                                     style={{
                                         left: `${((startTime - activeClip.startTime + 10) / (clipDuration + 20)) * 100}%`,
                                         width: `${(clipDuration / (clipDuration + 20)) * 100}%`,
-                                        backgroundColor: 'rgba(185,237,121,0.2)',
-                                        borderColor: '#b9ed79',
+                                        backgroundColor: 'var(--color-accent-soft)',
+                                        borderColor: 'var(--color-border-active)',
                                     }}
                                 />
                                 <div className="w-full flex items-center justify-between px-2 opacity-30">
@@ -374,8 +374,8 @@ export const CreatorStudio: React.FC = () => {
                                         <span
                                             className="text-xs font-mono px-2 py-1 rounded border"
                                             style={{
-                                                backgroundColor: 'rgba(10,8,7,0.9)',
-                                                borderColor: 'rgba(255,255,255,0.08)',
+                                                backgroundColor: 'var(--color-bg-input)',
+                                                borderColor: 'var(--color-border-subtle)',
                                                 color: 'var(--color-text-main)',
                                             }}
                                         >
@@ -403,8 +403,8 @@ export const CreatorStudio: React.FC = () => {
                                         <span
                                             className="text-xs font-mono px-2 py-1 rounded border"
                                             style={{
-                                                backgroundColor: 'rgba(10,8,7,0.9)',
-                                                borderColor: 'rgba(255,255,255,0.08)',
+                                                backgroundColor: 'var(--color-bg-input)',
+                                                borderColor: 'var(--color-border-subtle)',
                                                 color: 'var(--color-text-main)',
                                             }}
                                         >
@@ -421,11 +421,11 @@ export const CreatorStudio: React.FC = () => {
                     <div
                         className="p-4.5 rounded-2xl border space-y-4"
                         style={{
-                            backgroundColor: 'rgba(255,255,255,0.10)',
-                            borderColor: 'rgba(120,103,90,0.16)',
+                            backgroundColor: 'var(--color-bg-card-hover)',
+                            borderColor: 'var(--color-border-subtle)',
                         }}
                     >
-                        <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: 'rgba(120,103,90,0.14)' }}>
+                        <div className="flex items-center justify-between pb-3 border-b" style={{ borderColor: 'var(--color-border-subtle)' }}>
                             <div>
                                 <h3 className="text-xs font-semibold uppercase tracking-wider font-mono" style={{ color: 'var(--color-text-main)' }}>
                                     AI Edit Controls
@@ -454,8 +454,8 @@ export const CreatorStudio: React.FC = () => {
                                 <div
                                     className="p-2.5 rounded-md border font-mono text-xs"
                                     style={{
-                                        backgroundColor: 'rgba(10,8,7,0.9)',
-                                        borderColor: 'rgba(255,255,255,0.08)',
+                                        backgroundColor: 'var(--color-bg-input)',
+                                        borderColor: 'var(--color-border-subtle)',
                                         color: 'var(--color-text-main)',
                                     }}
                                 >
@@ -469,8 +469,8 @@ export const CreatorStudio: React.FC = () => {
                                 <div
                                     className="p-2.5 rounded-md border font-mono text-xs"
                                     style={{
-                                        backgroundColor: 'rgba(10,8,7,0.9)',
-                                        borderColor: 'rgba(255,255,255,0.08)',
+                                        backgroundColor: 'var(--color-bg-input)',
+                                        borderColor: 'var(--color-border-subtle)',
                                         color: 'var(--color-text-main)',
                                     }}
                                 >
@@ -504,9 +504,9 @@ export const CreatorStudio: React.FC = () => {
                                 }}
                                 className="w-full p-2.5 rounded-lg border text-xs focus:outline-none leading-relaxed font-medium"
                                 style={{
-                                    backgroundColor: 'rgba(10,8,7,0.9)',
-                                    borderColor: 'rgba(255,255,255,0.08)',
-                                    color: '#f1ede8',
+                                    backgroundColor: 'var(--color-bg-input)',
+                                    borderColor: 'var(--color-border-subtle)',
+                                    color: 'var(--color-text-main)',
                                 }}
                             />
                             <span className="text-[10px] mt-1 block font-mono" style={{ color: 'var(--color-text-muted)' }}>
@@ -527,9 +527,9 @@ export const CreatorStudio: React.FC = () => {
                                 }}
                                 className="w-full p-2.5 rounded-lg border text-xs focus:outline-none leading-relaxed font-mono"
                                 style={{
-                                    backgroundColor: 'rgba(10,8,7,0.9)',
-                                    borderColor: 'rgba(255,255,255,0.08)',
-                                    color: '#f1ede8',
+                                    backgroundColor: 'var(--color-bg-input)',
+                                    borderColor: 'var(--color-border-subtle)',
+                                    color: 'var(--color-text-main)',
                                 }}
                             />
                         </div>
@@ -537,8 +537,8 @@ export const CreatorStudio: React.FC = () => {
                         <div
                             className="p-3 rounded-lg border space-y-1.5 text-[11px]"
                             style={{
-                                backgroundColor: 'rgba(10,8,7,0.9)',
-                                borderColor: 'rgba(255,255,255,0.06)',
+                                backgroundColor: 'var(--color-bg-input)',
+                                borderColor: 'var(--color-border-subtle)',
                             }}
                         >
                             <span className="font-semibold uppercase tracking-wider text-[10px] font-mono" style={{ color: 'var(--color-text-muted)' }}>

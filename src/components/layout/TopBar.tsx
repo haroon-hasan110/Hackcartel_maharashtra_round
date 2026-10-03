@@ -86,25 +86,25 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
     swatch: string[];
   }[] = [
       {
-        id: 'wabi-sabi',
+        id: 'hero-canopy',
         name: 'Hero Canopy',
         sub: 'Obsidian & Lime',
         icon: '🏺',
         swatch: ['#090C09', '#151C15', '#B9ED79'],
       },
       {
-        id: 'sumi-clay',
-        name: 'Moss Edit',
-        sub: 'Deep Green & Lime',
-        icon: '🍵',
-        swatch: ['#0B0F0B', '#1B2319', '#9CDB70'],
+        id: 'day-edit',
+        name: 'Day Edit',
+        sub: 'Daylight & Lime',
+        icon: '☀️',
+        swatch: ['#F4F7F0', '#FFFFFF', '#B9ED79'],
       },
       {
-        id: 'cinematic',
+        id: 'night-cut',
         name: 'Night Cut',
         sub: 'Cinematic Charcoal',
         icon: '🎬',
-        swatch: ['#090C09', '#111611', '#D4E69B'],
+        swatch: ['#17191D', '#282C33', '#B9ED79'],
       },
     ];
 
@@ -196,7 +196,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
                     style={{
                       backgroundColor:
                         proj.id === activeProject.id
-                          ? 'rgba(185, 237, 121, 0.12)'
+                          ? 'var(--color-accent-soft)'
                           : 'transparent',
                       color:
                         proj.id === activeProject.id
@@ -305,7 +305,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
                       style={{
                         backgroundColor:
                           theme === opt.id
-                            ? 'rgba(185, 237, 121, 0.12)'
+                            ? 'var(--color-accent-soft)'
                             : 'transparent',
                       }}
                     >

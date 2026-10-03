@@ -77,7 +77,6 @@ export const Dashboard: React.FC = () => {
           <button
             onClick={() => navigateTo('upload')}
             className="flex items-center gap-2 px-5 py-2.5 clay-button-primary text-xs font-semibold cursor-pointer active:scale-95 shadow-sm"
-            style={{ boxShadow: '0 16px 28px rgba(157, 89, 63, 0.22)' }}
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Project</span>
@@ -290,7 +289,7 @@ export const Dashboard: React.FC = () => {
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
               style={{
-                backgroundColor: 'rgba(185, 237, 121, 0.14)',
+                backgroundColor: 'var(--color-accent-soft)',
                 color: 'var(--color-accent-terracotta)',
               }}
             >

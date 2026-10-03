@@ -24,28 +24,28 @@ export const Settings: React.FC = () => {
     swatches: string[];
   }[] = [
       {
-        id: 'wabi-sabi',
+        id: 'hero-canopy',
         name: 'Hero Canopy',
         sub: 'Obsidian & Lime',
-        description: 'Cinematic charcoal surfaces, soft glass details, and luminous lime accents.',
+        description: 'Near-black obsidian surfaces with a subtle green tint and luminous lime accents.',
         icon: '🏺',
         swatches: ['#090C09', '#151C15', '#B9ED79'],
       },
       {
-        id: 'sumi-clay',
-        name: 'Moss Edit',
-        sub: 'Deep Green & Lime',
-        description: 'A quieter forest-leaning variation with low-glare surfaces and restrained lime accents.',
-        icon: '🍵',
-        swatches: ['#0B0F0B', '#1B2319', '#9CDB70'],
+        id: 'day-edit',
+        name: 'Day Edit',
+        sub: 'Daylight & Lime',
+        description: 'A clear daylight workspace with soft surfaces and readable lime accents.',
+        icon: '☀️',
+        swatches: ['#F4F7F0', '#FFFFFF', '#B9ED79'],
       },
       {
-        id: 'cinematic',
+        id: 'night-cut',
         name: 'Night Cut',
         sub: 'Cinematic Charcoal',
-        description: 'A near-black editing surface with softened contrast and pale botanical highlights.',
+        description: 'A neutral charcoal editing surface with softened contrast and lime highlights.',
         icon: '🎬',
-        swatches: ['#090C09', '#111611', '#D4E69B'],
+        swatches: ['#17191D', '#282C33', '#B9ED79'],
       },
     ];
 

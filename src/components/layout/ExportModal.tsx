@@ -114,7 +114,7 @@ export const ExportModal: React.FC = () => {
               <div
                 className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
                 style={{
-                  backgroundColor: 'rgba(185, 237, 121, 0.14)',
+                  backgroundColor: 'var(--color-accent-soft)',
                   color: 'var(--color-accent-terracotta)',
                 }}
               >
@@ -272,7 +272,7 @@ export const ExportModal: React.FC = () => {
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
               style={{
-                backgroundColor: 'rgba(185, 237, 121, 0.14)',
+                backgroundColor: 'var(--color-accent-soft)',
                 color: 'var(--color-accent-terracotta)',
               }}
             >
@@ -322,7 +322,7 @@ export const ExportModal: React.FC = () => {
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
               style={{
-                backgroundColor: 'rgba(94, 117, 88, 0.2)',
+                backgroundColor: 'var(--color-accent-soft)',
                 color: 'var(--color-accent-matcha)',
               }}
             >

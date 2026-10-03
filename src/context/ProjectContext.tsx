@@ -18,7 +18,7 @@ export type AppRoute =
   | 'settings'
   | 'project-detail';
 
-export type ColorTheme = 'wabi-sabi' | 'sumi-clay' | 'cinematic';
+export type ColorTheme = 'hero-canopy' | 'day-edit' | 'night-cut';
 
 interface ProjectContextType {
   currentRoute: AppRoute;
@@ -62,10 +62,10 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('landing');
   const [theme, setThemeState] = useState<ColorTheme>(() => {
     const saved = localStorage.getItem('creatorai_theme');
-    if (saved === 'wabi-sabi' || saved === 'sumi-clay' || saved === 'cinematic') {
+    if (saved === 'hero-canopy' || saved === 'day-edit' || saved === 'night-cut') {
       return saved as ColorTheme;
     }
-    return 'wabi-sabi';
+    return 'hero-canopy';
   });
 
   const setTheme = (newTheme: ColorTheme) => {
@@ -75,10 +75,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const cycleTheme = () => {
     setThemeState((curr) => {
-      let next: ColorTheme = 'wabi-sabi';
-      if (curr === 'wabi-sabi') next = 'sumi-clay';
-      else if (curr === 'sumi-clay') next = 'cinematic';
-      else next = 'wabi-sabi';
+      let next: ColorTheme = 'hero-canopy';
+      if (curr === 'hero-canopy') next = 'day-edit';
+      else if (curr === 'day-edit') next = 'night-cut';
       localStorage.setItem('creatorai_theme', next);
       return next;
     });

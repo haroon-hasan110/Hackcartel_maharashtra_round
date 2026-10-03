@@ -98,8 +98,8 @@ export const NewProject: React.FC = () => {
             className="w-full px-4 py-2.5 text-sm placeholder-stone-400 focus:outline-none transition-all rounded-2xl border"
             style={{
               color: 'var(--color-text-main)',
-              backgroundColor: 'rgba(255,255,255,0.10)',
-              borderColor: 'rgba(120, 103, 90, 0.18)',
+              backgroundColor: 'var(--color-bg-input)',
+              borderColor: 'var(--color-border-subtle)',
             }}
           />
         </div>
@@ -117,13 +117,13 @@ export const NewProject: React.FC = () => {
               onClick={() => fileInputRef.current?.click()}
               className="border-2 border-dashed rounded-[28px] p-8 md:p-12 text-center cursor-pointer transition-all duration-200"
               style={{
-                backgroundColor: isDragging ? 'rgba(255,255,255,0.20)' : 'rgba(255,255,255,0.10)',
+                backgroundColor: isDragging ? 'var(--color-bg-card-hover)' : 'var(--color-bg-card)',
                 borderColor: isDragging ? 'var(--color-border-active)' : 'var(--color-border-subtle)',
-                boxShadow: '0 12px 30px rgba(100, 80, 63, 0.06)',
+                boxShadow: 'var(--clay-outer-shadow)',
               }}
             >
               <input ref={fileInputRef} type="file" accept="video/mp4,video/quicktime,video/mov" className="hidden" onChange={(e) => { if (e.target.files && e.target.files[0]) handleFileSelect(e.target.files[0]); }} />
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm" style={{ backgroundColor: 'rgba(185,237,121,0.12)', color: 'var(--color-accent-terracotta)' }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-sm" style={{ backgroundColor: 'var(--color-accent-soft)', color: 'var(--color-accent-terracotta)' }}>
                 <UploadCloud className="w-6 h-6" />
               </div>
               <h3 className="text-base font-semibold" style={{ color: 'var(--color-text-main)' }}>Drop your video here</h3>
@@ -137,10 +137,10 @@ export const NewProject: React.FC = () => {
               </div>
             </div>
           ) : (
-            <div className="p-4 rounded-[28px] space-y-3 border" style={{ backgroundColor: 'rgba(255,255,255,0.16)', borderColor: 'rgba(120,103,90,0.18)' }}>
+            <div className="p-4 rounded-[28px] space-y-3 border" style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border-subtle)' }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style={{ backgroundColor: 'rgba(185,237,121,0.12)', color: 'var(--color-accent-terracotta)' }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm" style={{ backgroundColor: 'var(--color-accent-soft)', color: 'var(--color-accent-terracotta)' }}>
                     <FileVideo className="w-5 h-5" />
                   </div>
                   <div>
@@ -149,12 +149,12 @@ export const NewProject: React.FC = () => {
                   </div>
                 </div>
 
-                <button type="button" onClick={handleClearVideo} className="p-1.5 rounded-xl transition-opacity active:scale-95 cursor-pointer" style={{ backgroundColor: 'rgba(255,255,255,0.12)', color: 'var(--color-text-muted)' }} title="Remove video">
+                <button type="button" onClick={handleClearVideo} className="p-1.5 rounded-xl transition-opacity active:scale-95 cursor-pointer" style={{ backgroundColor: 'var(--color-bg-card-hover)', color: 'var(--color-text-muted)' }} title="Remove video">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="flex items-center justify-between rounded-2xl px-3 py-2 text-[11px] border" style={{ backgroundColor: 'rgba(255,255,255,0.08)', borderColor: 'rgba(120,103,90,0.14)', color: 'var(--color-text-muted)' }}>
+              <div className="flex items-center justify-between rounded-2xl px-3 py-2 text-[11px] border" style={{ backgroundColor: 'var(--color-bg-card-hover)', borderColor: 'var(--color-border-subtle)', color: 'var(--color-text-muted)' }}>
                 <span>Ready for analysis</span>
                 <span className="font-semibold" style={{ color: 'var(--color-accent-terracotta)' }}>AI pipeline queued</span>
               </div>
@@ -176,8 +176,8 @@ export const NewProject: React.FC = () => {
                 onClick={() => setContentType(type.id)}
                 className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-full border text-xs font-medium transition-all"
                 style={{
-                  backgroundColor: contentType === type.id ? 'rgba(185,237,121,0.12)' : 'rgba(255,255,255,0.06)',
-                  borderColor: contentType === type.id ? 'rgba(185,237,121,0.42)' : 'var(--color-border-subtle)',
+                  backgroundColor: contentType === type.id ? 'var(--color-accent-soft)' : 'var(--color-bg-card)',
+                  borderColor: contentType === type.id ? 'var(--color-border-active)' : 'var(--color-border-subtle)',
                   color: contentType === type.id ? 'var(--color-accent-terracotta)' : 'var(--color-text-main)',
                 }}
               >
@@ -189,7 +189,7 @@ export const NewProject: React.FC = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-[24px] border p-4" style={{ backgroundColor: 'rgba(255,255,255,0.10)', borderColor: 'rgba(120,103,90,0.18)' }}>
+          <div className="rounded-[24px] border p-4" style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border-subtle)' }}>
             <div className="flex items-center justify-between gap-3 mb-3">
               <label className="block text-xs font-semibold font-mono tracking-wide" style={{ color: 'var(--color-text-muted)' }}>Optional Script or Transcript</label>
               <button type="button" onClick={() => scriptInputRef.current?.click()} className="text-[11px] font-medium" style={{ color: 'var(--color-accent-terracotta)' }}>Upload Script</button>
@@ -203,8 +203,8 @@ export const NewProject: React.FC = () => {
               placeholder="Paste transcript or script if available (CreatorAI will sync timestamps directly to video)"
               className="w-full resize-none rounded-2xl border px-3 py-2.5 text-xs focus:outline-none"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.08)',
-                borderColor: 'rgba(120,103,90,0.18)',
+                backgroundColor: 'var(--color-bg-input)',
+                borderColor: 'var(--color-border-subtle)',
                 color: 'var(--color-text-main)',
               }}
             />

@@ -37,9 +37,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
   };
 
   const themeDisplay = {
-    'wabi-sabi': { label: 'Wabi-Sabi Clay', icon: '🏺' },
-    'sumi-clay': { label: 'Sumi Stone', icon: '🍵' },
-    'cinematic': { label: 'Midnight Slate', icon: '🎬' },
+    'hero-canopy': { label: 'Hero Canopy', icon: '🏺' },
+    'day-edit': { label: 'Day Edit', icon: '☀️' },
+    'night-cut': { label: 'Night Cut', icon: '🎬' },
   }[theme];
 
   return (
@@ -62,9 +62,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
             title="Go to Hero Page"
           >
             <div
-              className="w-7 h-7 rounded-xl flex items-center justify-center text-white shadow-sm transition-transform group-hover:scale-105"
+              className="w-7 h-7 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105"
               style={{
                 backgroundColor: 'var(--color-accent-terracotta)',
+                color: 'var(--accent-contrast)',
               }}
             >
               <Layers className="w-4 h-4 stroke-[2.2]" />

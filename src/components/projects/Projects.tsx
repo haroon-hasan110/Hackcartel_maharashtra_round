@@ -34,12 +34,7 @@ export const Projects: React.FC = () => {
 
         <button
           onClick={() => navigateTo('upload')}
-          className="flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold rounded-full transition-all self-start sm:self-auto shadow-sm border"
-          style={{
-            background: 'linear-gradient(120deg, #e7ffba 0%, #c9f18a 46%, #91d96c 100%)',
-            borderColor: 'rgba(220, 255, 190, 0.5)',
-            color: '#10190d',
-          }}
+          className="clay-button-primary flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold rounded-full transition-all self-start sm:self-auto shadow-sm border"
         >
           <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
           <span>New Project</span>
@@ -47,7 +42,7 @@ export const Projects: React.FC = () => {
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-        <div className="flex items-center gap-1 p-1 rounded-full self-start border" style={{ backgroundColor: 'rgba(255,255,255,0.24)', borderColor: 'rgba(120, 103, 90, 0.18)' }}>
+        <div className="flex items-center gap-1 p-1 rounded-full self-start border" style={{ backgroundColor: 'var(--color-bg-card-elevated)', borderColor: 'var(--color-border-subtle)' }}>
           {[
             { id: 'all', label: 'Recent' },
             { id: 'recent', label: 'Recent' },
@@ -59,8 +54,8 @@ export const Projects: React.FC = () => {
               onClick={() => setFilterTab(tab.id as any)}
               className="px-3 py-1.5 text-xs font-medium rounded-full transition-colors"
               style={{
-                backgroundColor: filterTab === tab.id ? 'rgba(18, 17, 16, 0.88)' : 'transparent',
-                color: filterTab === tab.id ? '#f7f0e8' : 'var(--color-text-muted)',
+                backgroundColor: filterTab === tab.id ? 'var(--color-bg-card-hover)' : 'transparent',
+                color: filterTab === tab.id ? 'var(--color-text-main)' : 'var(--color-text-muted)',
               }}
             >
               {tab.label}
@@ -77,8 +72,8 @@ export const Projects: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-3 py-2 border rounded-full text-xs focus:outline-none transition-colors"
             style={{
-              backgroundColor: 'rgba(255,255,255,0.12)',
-              borderColor: 'rgba(120, 103, 90, 0.18)',
+              backgroundColor: 'var(--color-bg-input)',
+              borderColor: 'var(--color-border-subtle)',
               color: 'var(--color-text-main)',
             }}
           />
@@ -92,9 +87,9 @@ export const Projects: React.FC = () => {
               key={proj.id}
               className="p-4 rounded-[26px] border transition-all flex flex-col justify-between group"
               style={{
-                backgroundColor: 'rgba(255,255,255,0.18)',
-                borderColor: 'rgba(120, 103, 90, 0.18)',
-                boxShadow: '0 10px 30px rgba(96, 77, 62, 0.06)',
+                backgroundColor: 'var(--color-bg-card)',
+                borderColor: 'var(--color-border-subtle)',
+                boxShadow: 'var(--clay-outer-shadow)',
               }}
             >
               <div>
@@ -104,7 +99,7 @@ export const Projects: React.FC = () => {
                     navigateTo('content-map', proj.id);
                   }}
                   className="relative aspect-video rounded-[18px] overflow-hidden border cursor-pointer mb-3.5"
-                  style={{ borderColor: 'rgba(120, 103, 90, 0.16)' }}
+                  style={{ borderColor: 'var(--color-border-subtle)' }}
                 >
                   <img
                     src={proj.thumbnailUrl}
@@ -140,7 +135,7 @@ export const Projects: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mt-5 pt-3 border-t flex items-center justify-between" style={{ borderColor: 'rgba(120,103,90,0.16)' }}>
+              <div className="mt-5 pt-3 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-subtle)' }}>
                 <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
                   <span className="font-medium" style={{ color: 'var(--color-text-main)' }}>{proj.generatedClipsCount}</span> clips ·{' '}
                   <span className="font-medium" style={{ color: 'var(--color-text-main)' }}>{proj.totalAssetsCount}</span> assets
@@ -153,9 +148,9 @@ export const Projects: React.FC = () => {
                   }}
                   className="px-2.5 py-1.5 rounded-full border text-xs font-medium transition-colors"
                   style={{
-                    borderColor: 'rgba(120,103,90,0.18)',
+                    borderColor: 'var(--color-border-subtle)',
                     color: 'var(--color-text-main)',
-                    backgroundColor: 'rgba(255,255,255,0.12)',
+                    backgroundColor: 'var(--color-bg-card-hover)',
                   }}
                 >
                   Open
@@ -165,7 +160,7 @@ export const Projects: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="py-16 text-center border border-dashed rounded-2xl" style={{ borderColor: 'rgba(120,103,90,0.18)', backgroundColor: 'rgba(255,255,255,0.10)' }}>
+        <div className="py-16 text-center border border-dashed rounded-2xl" style={{ borderColor: 'var(--color-border-subtle)', backgroundColor: 'var(--color-bg-card)' }}>
           <FolderOpen className="w-10 h-10 mx-auto mb-3" style={{ color: 'var(--color-text-muted)' }} />
           <h3 className="text-sm font-semibold" style={{ color: 'var(--color-text-main)' }}>No projects found</h3>
           <p className="text-xs mt-1 max-w-sm mx-auto" style={{ color: 'var(--color-text-muted)' }}>
@@ -175,11 +170,7 @@ export const Projects: React.FC = () => {
           </p>
           <button
             onClick={() => navigateTo('upload')}
-            className="mt-4 px-4 py-2 text-xs font-semibold rounded-full transition-all"
-            style={{
-              background: 'linear-gradient(120deg, #e7ffba 0%, #c9f18a 46%, #91d96c 100%)',
-              color: '#10190d',
-            }}
+            className="clay-button-primary mt-4 px-4 py-2 text-xs font-semibold rounded-full transition-all"
           >
             Start New Project
           </button>
