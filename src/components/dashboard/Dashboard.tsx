@@ -5,12 +5,26 @@ import {
   ArrowRight,
   Layers,
   ChevronRight,
+<<<<<<< HEAD
+=======
+  Sparkles,
+  Search,
+  Loader2,
+  Eye,
+  Heart,
+  MessageCircle,
+>>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
+import { api, YouTubeVideo } from '../../services/api';
 
 export const Dashboard: React.FC = () => {
   const { projects, projectsLoaded, selectProject, navigateTo } = useProject();
   const [activePipelineStep, setActivePipelineStep] = useState<number>(0);
+  const [recommendationQuery, setRecommendationQuery] = useState('AI video editing');
+  const [recommendations, setRecommendations] = useState<YouTubeVideo[]>([]);
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+  const [recommendationError, setRecommendationError] = useState('');
 
   const pipelineSteps = [
     {
@@ -50,6 +64,7 @@ export const Dashboard: React.FC = () => {
     navigateTo('content-map');
   };
 
+<<<<<<< HEAD
   if (!projectsLoaded) {
     return (
       <div className="py-20 text-center text-sm" style={{ color: 'var(--color-text-muted)' }} role="status">
@@ -100,6 +115,33 @@ export const Dashboard: React.FC = () => {
       </div>
     );
   }
+=======
+  const loadRecommendations = async () => {
+    const query = recommendationQuery.trim();
+    if (!query) return;
+
+    setIsLoadingRecommendations(true);
+    setRecommendationError('');
+    try {
+      const videos = await api.getYouTubeRecommendations(query);
+      const ids = videos
+        .map((video) => typeof video.id === 'string' ? video.id : video.id?.videoId)
+        .filter((id): id is string => Boolean(id));
+      const numbers = await api.getYouTubeEngagement(ids);
+      const numbersById = new Map(numbers.map((video) => [video.id as string, video]));
+      setRecommendations(videos.map((video) => {
+        const id = typeof video.id === 'string' ? video.id : video.id?.videoId;
+        return { ...video, ...(id ? numbersById.get(id) : {}) };
+      }));
+    } catch (error) {
+      setRecommendationError(error instanceof Error ? error.message : 'Unable to load YouTube recommendations.');
+    } finally {
+      setIsLoadingRecommendations(false);
+    }
+  };
+
+  const formatNumber = (value?: number) => value == null ? '--' : new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+>>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 
   return (
     <div className="space-y-8 pb-16">
@@ -144,6 +186,60 @@ export const Dashboard: React.FC = () => {
             <span>View Demo (AI Agents Podcast)</span>
           </button>
 
+        </div>
+      </section>
+
+      <section
+        className="p-5 md:p-6 rounded-3xl clay-card space-y-4"
+        style={{ backgroundColor: 'var(--color-bg-card-elevated)', borderColor: 'var(--color-border-subtle)' }}
+      >
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold" style={{ color: 'var(--color-text-main)' }}>YouTube recommendations</h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>Find relevant videos and extract their public performance numbers.</p>
+          </div>
+          <div className="flex gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-64">
+              <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5" style={{ color: 'var(--color-text-muted)' }} />
+              <input
+                value={recommendationQuery}
+                onChange={(event) => setRecommendationQuery(event.target.value)}
+                onKeyDown={(event) => { if (event.key === 'Enter') loadRecommendations(); }}
+                className="w-full rounded-lg border pl-8 pr-3 py-2 text-xs outline-none"
+                style={{ backgroundColor: 'var(--color-bg-card)', borderColor: 'var(--color-border)', color: 'var(--color-text-main)' }}
+                placeholder="Search a topic"
+              />
+            </div>
+            <button onClick={loadRecommendations} disabled={isLoadingRecommendations} className="clay-button-primary px-3 py-2 text-xs font-semibold disabled:opacity-60">
+              {isLoadingRecommendations ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+              <span className="sr-only">Search YouTube</span>
+            </button>
+          </div>
+        </div>
+
+        {recommendationError && <p className="text-xs text-red-500">{recommendationError}</p>}
+        {!recommendations.length && !isLoadingRecommendations && !recommendationError && (
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>Search for a topic to see live recommendations.</p>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {recommendations.map((video) => {
+            const videoId = typeof video.id === 'string' ? video.id : video.id?.videoId;
+            const thumbnail = video.snippet?.thumbnails?.medium?.url || video.snippet?.thumbnails?.high?.url;
+            return (
+              <a key={videoId} href={videoId ? `https://www.youtube.com/watch?v=${videoId}` : '#'} target="_blank" rel="noreferrer" className="flex gap-3 rounded-xl border p-2.5 hover:opacity-80" style={{ borderColor: 'var(--color-border-subtle)' }}>
+                {thumbnail && <img src={thumbnail} alt="" className="w-28 aspect-video rounded-lg object-cover" />}
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xs font-semibold line-clamp-2" style={{ color: 'var(--color-text-main)' }}>{video.snippet?.title || 'Untitled video'}</h3>
+                  <p className="text-[10px] mt-1 truncate" style={{ color: 'var(--color-text-muted)' }}>{video.snippet?.channelTitle || 'YouTube'}</p>
+                  <div className="flex flex-wrap gap-2 mt-2 text-[10px] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+                    <span><Eye className="inline w-3 h-3 mr-0.5" />{formatNumber(video.views)}</span>
+                    <span><Heart className="inline w-3 h-3 mr-0.5" />{formatNumber(video.likes)}</span>
+                    <span><MessageCircle className="inline w-3 h-3 mr-0.5" />{formatNumber(video.comments)}</span>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </section>
 

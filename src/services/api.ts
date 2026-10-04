@@ -8,6 +8,21 @@ import { generateLocalJson, generateLocalText } from './ollama';
 export const AI_MODE = 'ollama';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const YOUTUBE_API_PATH = '/youtube';
+
+export interface YouTubeVideo {
+  id?: { videoId?: string } | string;
+  snippet?: {
+    title?: string;
+    description?: string;
+    thumbnails?: { medium?: { url?: string }; high?: { url?: string } };
+    channelTitle?: string;
+  };
+  views?: number;
+  likes?: number;
+  comments?: number;
+  engagement_rate_percent?: number;
+}
 
 const platformFormats: Record<PlatformAdaptation['platform'], string> = {
   instagram: '9:16 Vertical Reel',
@@ -471,6 +486,76 @@ class ContentApiService {
       downloadUrl: '#',
       filename: `creator_ai_export_${Date.now()}.${format}`,
     };
+  }
+
+  async getYouTubeConfigStatus(): Promise<{ ready: boolean; message: string }> {
+    try {
+      const response = await fetch(`${YOUTUBE_API_PATH}/config-status`);
+      const data = await response.json().catch(() => ({ ready: false, message: 'Unable to reach YouTube config endpoint.' }));
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Unable to check YouTube config status.');
+      }
+
+      return data;
+    } catch (error) {
+      throw error instanceof Error ? error : new Error('Unable to reach YouTube config endpoint.');
+    }
+  }
+
+  async getYouTubeRecommendations(query: string, region = 'IN', maxResults = 8): Promise<YouTubeVideo[]> {
+    const response = await fetch(`${YOUTUBE_API_PATH}/recommendations?query=${encodeURIComponent(query)}&region=${region}&max_results=${maxResults}`);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.detail || 'Unable to load YouTube recommendations.');
+    return data.items || [];
+  }
+
+  async getYouTubeEngagement(videoIds: string[]): Promise<YouTubeVideo[]> {
+    if (!videoIds.length) return [];
+    const response = await fetch(`${YOUTUBE_API_PATH}/engagement?video_ids=${encodeURIComponent(videoIds.join(','))}`);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.detail || 'Unable to extract YouTube numbers.');
+    return data.items || [];
+  }
+
+  async uploadToYouTube(payload: {
+    file: File;
+    title: string;
+    description?: string;
+    privacyStatus?: string;
+    tags?: string[];
+    onProgress?: (progress: number) => void;
+  }): Promise<{ status: string; result: Record<string, unknown> }> {
+    const formData = new FormData();
+    formData.append('file', payload.file);
+    formData.append('title', payload.title);
+    formData.append('description', payload.description || '');
+    formData.append('privacy_status', payload.privacyStatus || 'private');
+    formData.append('tags', (payload.tags || []).join(','));
+
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest();
+      request.open('POST', `${YOUTUBE_API_PATH}/upload`);
+      request.responseType = 'json';
+      payload.onProgress?.(1);
+      request.upload.addEventListener('loadstart', () => payload.onProgress?.(1));
+      request.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          payload.onProgress?.(Math.round((event.loaded / event.total) * 100));
+        }
+      });
+      request.addEventListener('load', () => {
+        const data = request.response || {};
+        if (request.status < 200 || request.status >= 300) {
+          reject(new Error(data?.detail || 'YouTube upload failed'));
+          return;
+        }
+        resolve(data);
+      });
+      request.addEventListener('error', () => reject(new Error('Could not reach the YouTube upload server.')));
+      request.addEventListener('abort', () => reject(new Error('YouTube upload was cancelled.')));
+      request.send(formData);
+    });
   }
 }
 
