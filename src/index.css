@@ -79,6 +79,38 @@
   --clay-pill-shadow: 0 8px 24px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
+/* ==========================================================================
+#Claymorphism & Wabi-Sabi Theme Tokens
+   ========================================================================== */
+
+/* 1. Premium Wabi-Sabi Clay (Warm Earth, Ivory & Copper) */
+.theme-wabi-sabi {
+  --color-bg-app: #F7F1E8;
+  --color-bg-sidebar: #EEE2D6;
+  --color-bg-topbar: rgba(247, 241, 232, 0.86);
+  --color-bg-card: #F3EAE0;
+  --color-bg-card-elevated: #FAF5F0;
+  --color-bg-card-hover: #F0E6DA;
+  --color-bg-input: #EDE1D4;
+  --color-border: rgba(67, 43, 31, 0.12);
+  --color-border-subtle: rgba(67, 43, 31, 0.08);
+  --color-border-active: #C76E4F;
+  --color-text-main: #231D1A;
+  --color-text-muted: #6D5F57;
+  --color-text-faint: #978878;
+  --color-accent-terracotta: #C76E4F;
+  --color-accent-matcha: #7A8E6B;
+  --color-accent-stone: #2E2A29;
+  --color-accent-ochre: #B77A41;
+
+  /* Clay Shadows (Warm Sculpted Ceramics & Matte Touch) */
+  --clay-outer-shadow: 10px 14px 28px rgba(165, 145, 125, 0.18), -8px -8px 22px rgba(255, 255, 255, 0.9);
+  --clay-card-inset: inset 2px 2px 4px rgba(255, 255, 255, 0.7), inset -3px -3px 6px rgba(140, 120, 100, 0.12);
+  --clay-input-inset: inset 3px 3px 6px rgba(130, 110, 90, 0.18), inset -2px -2px 5px rgba(255, 255, 255, 0.85);
+  --clay-button-shadow: 0 4px 14px rgba(191, 92, 56, 0.28), 0 1px 3px rgba(0, 0, 0, 0.08), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.35), inset 0 -2px 3px rgba(90, 30, 12, 0.22);
+  --clay-pill-shadow: 0 3px 10px rgba(150, 130, 110, 0.14), inset 0 1.5px 2px rgba(255, 255, 255, 0.8), inset 0 -1.5px 2px rgba(160, 140, 120, 0.12);
+}
+
 /* Day Edit: daylight surfaces with accessible lime text accents. */
 .theme-day-edit {
   --bg: #f4f7f0;
@@ -398,6 +430,103 @@
     min-width: 0;
     width: min(100%, 420px);
   }
+}
+
+/* ==========================================================================
+  Wabi-Sabi & Claymorphism Workspace Transformations
+   ========================================================================== */
+
+/* Wabi-Sabi Clay (Warm Earth & Linen) */
+.theme-wabi-sabi {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
+}
+
+.theme-wabi-sabi [class*="bg-[#0D1017]"],
+.theme-wabi-sabi [class*="bg-[#0C0E15]"],
+.theme-wabi-sabi [class*="bg-[#0C0E16]"],
+.theme-wabi-sabi [class*="bg-[#0F131D]"],
+.theme-wabi-sabi [class*="bg-[#07090E]"],
+.theme-wabi-sabi [class*="bg-[#07090F]"],
+.theme-wabi-sabi [class*="bg-[#080B10]"],
+.theme-wabi-sabi [class*="bg-[#10131C]"],
+.theme-wabi-sabi [class*="bg-[#12151E]"],
+.theme-wabi-sabi [class*="bg-[#141824]"],
+.theme-wabi-sabi [class*="bg-neutral-900"],
+.theme-wabi-sabi [class*="bg-neutral-950"] {
+  background-color: var(--color-bg-card-elevated) !important;
+  color: var(--color-text-main);
+  border-color: var(--color-border-subtle) !important;
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border-radius: 1.25rem;
+}
+
+.theme-wabi-sabi [class*="text-white"] {
+  color: var(--color-text-main) !important;
+}
+
+.theme-wabi-sabi [class*="text-neutral-200"],
+.theme-wabi-sabi [class*="text-neutral-300"],
+.theme-wabi-sabi [class*="text-neutral-400"] {
+  color: var(--color-text-muted) !important;
+}
+
+.theme-wabi-sabi [class*="text-cyan-400"],
+.theme-wabi-sabi [class*="text-cyan-300"] {
+  color: var(--color-accent-terracotta) !important;
+}
+
+.theme-wabi-sabi [class*="bg-cyan-400"],
+.theme-wabi-sabi [class*="bg-cyan-500"] {
+  background-color: var(--color-accent-terracotta) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--clay-button-shadow) !important;
+  border-radius: 9999px;
+}
+
+.theme-wabi-sabi [class*="border-cyan-500"] {
+  border-color: var(--color-accent-terracotta) !important;
+}
+
+/* Sumi Stone (Warm Charcoal & Terracotta) */
+.theme-sumi-clay {
+  background-color: var(--color-bg-app);
+  color: var(--color-text-main);
+}
+
+.theme-sumi-clay [class*="bg-[#0D1017]"],
+.theme-sumi-clay [class*="bg-[#0C0E15]"],
+.theme-sumi-clay [class*="bg-[#0C0E16]"],
+.theme-sumi-clay [class*="bg-[#0F131D]"],
+.theme-sumi-clay [class*="bg-[#07090E]"],
+.theme-sumi-clay [class*="bg-[#07090F]"],
+.theme-sumi-clay [class*="bg-[#080B10]"],
+.theme-sumi-clay [class*="bg-[#10131C]"],
+.theme-sumi-clay [class*="bg-[#12151E]"],
+.theme-sumi-clay [class*="bg-[#141824]"],
+.theme-sumi-clay [class*="bg-neutral-900"],
+.theme-sumi-clay [class*="bg-neutral-950"] {
+  background-color: var(--color-bg-card-elevated) !important;
+  border-color: var(--color-border-subtle) !important;
+  box-shadow: var(--clay-outer-shadow), var(--clay-card-inset);
+  border-radius: 1.25rem;
+}
+
+.theme-sumi-clay [class*="text-cyan-400"],
+.theme-sumi-clay [class*="text-cyan-300"] {
+  color: var(--color-accent-terracotta) !important;
+}
+
+.theme-sumi-clay [class*="bg-cyan-400"],
+.theme-sumi-clay [class*="bg-cyan-500"] {
+  background-color: var(--color-accent-terracotta) !important;
+  color: #FFFFFF !important;
+  box-shadow: var(--clay-button-shadow) !important;
+  border-radius: 9999px;
+}
+
+.theme-sumi-clay [class*="border-cyan-500"] {
+  border-color: var(--color-accent-terracotta) !important;
 }
 
 /* Liquid Glass specification */
