@@ -28,7 +28,6 @@ export interface YouTubeVideo {
 const platformFormats: Record<PlatformAdaptation['platform'], string> = {
   instagram: '9:16 Vertical Reel',
   youtube: '9:16 YouTube Short',
-  linkedin: 'Professional editorial post with clip',
   x: 'Concise post with video',
 };
 
@@ -452,6 +451,66 @@ class ContentApiService {
       hashtags: Array.isArray(generated.hashtags) ? generated.hashtags : [],
       callToAction: generated.callToAction,
     };
+  }
+
+  async publishXPost(payload: {
+    clipId: string;
+    hook: string;
+    postBody: string;
+  }): Promise<{ status: string; id: string }> {
+    const response = await fetch('/repurpose/x/publish', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clip_id: payload.clipId,
+        hook: payload.hook,
+        postBody: payload.postBody,
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.detail || 'Unable to publish to X.');
+    return data;
+  }
+
+  async uploadGeneratedVideoToAll(payload: {
+    videoUrl: string;
+    title: string;
+    description: string;
+    hook: string;
+    postBody: string;
+    tags?: string[];
+  }): Promise<{ youtube: Record<string, unknown>; x: { status: string; id: string } }> {
+    const response = await fetch('/repurpose/upload-all', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        video_url: payload.videoUrl,
+        title: payload.title,
+        description: payload.description,
+        hook: payload.hook,
+        postBody: payload.postBody,
+        tags: payload.tags || [],
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data?.detail || 'Unable to upload the generated video to all platforms.');
+    }
+    return data;
+  }
+
+  async generateXPostFromPrompt(prompt: string): Promise<{ hook: string; postBody: string }> {
+    const generated = await generateLocalJson<{ hook?: string; postBody?: string }>(
+      'You are an X post writing assistant. Return only valid JSON with hook and postBody string fields. Keep the combined post at 280 characters or fewer. Follow the user prompt while never inventing facts.',
+      `Write one publish-ready X post for this user request:\n${prompt}\n\nReturn JSON: {"hook":"short opening","postBody":"complete post"}`
+    );
+    const hook = generated.hook?.trim() || '';
+    const postBody = generated.postBody?.trim() || '';
+    if (!hook || !postBody) throw new Error('Ollama returned an incomplete X post.');
+    if (`${hook}\n\n${postBody}`.length > 280) {
+      throw new Error('Ollama returned a post longer than X allows. Try a shorter prompt.');
+    }
+    return { hook, postBody };
   }
 
   async getAssets(): Promise<GeneratedAsset[]> {

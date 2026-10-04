@@ -208,7 +208,7 @@ export const ExportModal: React.FC = () => {
                 {[
                   { id: '9:16', label: '9:16 Vertical (1080×1920)', sub: 'Reels / Shorts / TikTok' },
                   { id: '16:9', label: '16:9 Landscape (1920×1080)', sub: 'YouTube / Web' },
-                  { id: '1:1', label: '1:1 Square (1080×1080)', sub: 'LinkedIn / Feed' },
+                  { id: '1:1', label: '1:1 Square (1080×1080)', sub: 'X / Feed' },
                 ].map((ratio) => (
                   <button
                     key={ratio.id}

@@ -6,6 +6,7 @@ import {
   Film,
   Clapperboard,
   Repeat,
+  Send,
   Library,
   Settings,
   Plus,
@@ -30,6 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     { label: 'Creator Studio', route: 'studio', icon: Film },
     { label: 'Script to Video', route: 'script-to-video', icon: Clapperboard },
     { label: 'Repurpose', route: 'repurpose', icon: Repeat },
+    { label: 'Post Automation', route: 'post-automation', icon: Send },
     { label: 'Assets', route: 'assets', icon: Library },
   ];
 

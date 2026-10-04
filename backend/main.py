@@ -1,6 +1,13 @@
 import json
 import logging
 import os
+import base64
+import hashlib
+import hmac
+import tempfile
+import time
+import urllib.parse
+import uuid
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -28,6 +35,15 @@ class LinkedInPost(BaseModel):
 
     hook: str = Field(min_length=1)
     postBody: str = Field(min_length=1)
+
+
+class UploadAllRequest(BaseModel):
+    video_url: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    description: str = ""
+    hook: str = Field(min_length=1)
+    postBody: str = Field(min_length=1)
+    tags: list[str] = Field(default_factory=list)
 
 
 def generate_linkedin_post(payload: RepurposeRequest) -> LinkedInPost:
@@ -116,6 +132,118 @@ def repurpose_linkedin(payload: RepurposeRequest) -> dict[str, Any]:
             status_code=500,
             detail="Failed to generate and save LinkedIn adaptation",
         ) from error
+
+
+def _x_oauth_header(method: str, url: str) -> str:
+    values = {
+        "consumer_key": os.getenv("X_CONSUMER_KEY", "").strip(),
+        "consumer_secret": os.getenv("X_CONSUMER_SECRET", "").strip(),
+        "token": os.getenv("X_ACCESS_TOKEN", "").strip(),
+        "token_secret": os.getenv("X_ACCESS_TOKEN_SECRET", "").strip(),
+    }
+    if not all(values.values()):
+        raise RuntimeError(
+            "X video uploads require X_CONSUMER_KEY, X_CONSUMER_SECRET, X_ACCESS_TOKEN, and X_ACCESS_TOKEN_SECRET."
+        )
+
+    oauth = {
+        "oauth_consumer_key": values["consumer_key"],
+        "oauth_nonce": uuid.uuid4().hex,
+        "oauth_signature_method": "HMAC-SHA1",
+        "oauth_timestamp": str(int(time.time())),
+        "oauth_token": values["token"],
+        "oauth_version": "1.0",
+    }
+    encode = lambda value: urllib.parse.quote(str(value), safe="~-._")
+    normalized = "&".join(f"{encode(key)}={encode(value)}" for key, value in sorted(oauth.items()))
+    signature_base = "&".join(("POST", encode(url), encode(normalized)))
+    signing_key = f"{encode(values['consumer_secret'])}&{encode(values['token_secret'])}"
+    signature = base64.b64encode(
+        hmac.new(signing_key.encode(), signature_base.encode(), hashlib.sha1).digest()
+    ).decode()
+    oauth["oauth_signature"] = signature
+    return "OAuth " + ", ".join(
+        f'{encode(key)}="{encode(value)}"' for key, value in sorted(oauth.items())
+    )
+
+
+def _upload_video_to_x(video_bytes: bytes, hook: str, post_body: str) -> dict[str, str]:
+    upload_url = os.getenv(
+        "X_MEDIA_UPLOAD_URL",
+        "https://upload.twitter.com/1.1/media/upload.json",
+    ).strip()
+    boundary = f"creatorai-{uuid.uuid4().hex}"
+    body = (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="media"; filename="creatorai.mp4"\r\n'
+        "Content-Type: video/mp4\r\n\r\n"
+    ).encode() + video_bytes + f"\r\n--{boundary}--\r\n".encode()
+    with urlopen(
+        Request(
+            upload_url,
+            data=body,
+            headers={
+                "Authorization": _x_oauth_header("POST", upload_url),
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+            },
+            method="POST",
+        ),
+        timeout=120,
+    ) as response:
+        media = json.loads(response.read().decode("utf-8"))
+    media_id = media.get("media_id_string") if isinstance(media, dict) else None
+    if not media_id:
+        raise RuntimeError("X media upload returned no media id.")
+
+    tweet_url = os.getenv("X_API_URL", "https://api.x.com/2/tweets").strip()
+    with urlopen(
+        Request(
+            tweet_url,
+            data=json.dumps(
+                {"text": f"{hook}\n\n{post_body}".strip(), "media": {"media_ids": [media_id]}}
+            ).encode("utf-8"),
+            headers={
+                "Authorization": _x_oauth_header("POST", tweet_url),
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        ),
+        timeout=30,
+    ) as response:
+        tweet = json.loads(response.read().decode("utf-8"))
+    post_id = tweet.get("data", {}).get("id", "") if isinstance(tweet, dict) else ""
+    return {"status": "published", "id": post_id or "created"}
+
+
+@app.post("/repurpose/upload-all")
+def upload_all(payload: UploadAllRequest) -> dict[str, Any]:
+    try:
+        with urlopen(Request(payload.video_url, headers={"User-Agent": "CreatorAI/1.0"}), timeout=120) as response:
+            video_bytes = response.read()
+        if not video_bytes:
+            raise RuntimeError("Generated video URL returned an empty file.")
+
+        with tempfile.NamedTemporaryFile(suffix=".mp4") as video_file:
+            video_file.write(video_bytes)
+            video_file.flush()
+            youtube_result = upload_video_file(
+                video_file,
+                title=payload.title,
+                description=payload.description,
+                tags=payload.tags,
+            )
+        x_result = _upload_video_to_x(video_bytes, payload.hook, payload.postBody)
+        return {"youtube": youtube_result, "x": x_result}
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace").strip()
+        raise HTTPException(status_code=502, detail=f"Platform rejected the upload ({error.code}): {detail}") from error
+    except URLError as error:
+        raise HTTPException(status_code=502, detail=f"Could not download generated video: {error.reason}") from error
+    except RuntimeError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:
+        logger.exception("Upload-all request failed")
+        raise HTTPException(status_code=500, detail="Could not upload the generated video to all platforms.") from error
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile

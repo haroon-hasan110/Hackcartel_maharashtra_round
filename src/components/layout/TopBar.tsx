@@ -10,8 +10,13 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useProject, ColorTheme } from '../../context/ProjectContext';
-import { supabase } from '../../lib/supabase';
 import creatorAvatar from '../../assets/images/avatar_creator_1791027561231.jpg';
+import {
+  getSupabaseOAuthRedirectUrl,
+  hasPlaceholderSupabaseUrl,
+  hasSupabaseConfig,
+  supabase,
+} from '../../lib/supabase';
 
 interface TopBarProps {
   onToggleMobile: () => void;
@@ -55,13 +60,27 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
   }, []);
 
   const handleGoogleLogin = async () => {
-    if (!supabase) return;
+    if (!hasSupabaseConfig) {
+      console.error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+      return;
+    }
+
+    if (hasPlaceholderSupabaseUrl || !supabase) {
+      console.error('Set your real Supabase project URL before Google sign-in');
+      return;
+    }
+
+    const redirectTo = getSupabaseOAuthRedirectUrl();
+    if (!redirectTo) {
+      console.error('Unable to resolve OAuth redirect URL');
+      return;
+    }
 
     setAuthLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo,
       },
     });
 

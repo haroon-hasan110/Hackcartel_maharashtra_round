@@ -110,6 +110,7 @@ export const MorphicStudio: React.FC = () => {
       setJob((prev) => (prev ? { ...prev, status: 'COMBINING' } : prev));
       const finalJob = await combineGeneratedScenes(newJob.id);
       setJob(finalJob);
+      sessionStorage.setItem('creatorai:last-script-video-job', JSON.stringify(finalJob));
       setActiveSceneId(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Video generation failed.');
@@ -132,6 +133,7 @@ export const MorphicStudio: React.FC = () => {
       if (allReady) {
         const finalJob = await combineGeneratedScenes(job.id);
         setJob(finalJob);
+        sessionStorage.setItem('creatorai:last-script-video-job', JSON.stringify(finalJob));
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Scene generation failed.');
@@ -148,6 +150,7 @@ export const MorphicStudio: React.FC = () => {
       setVisualDirection(demoJob.visualDirection || '');
       setAspectRatio(demoJob.aspectRatio);
       setJob(demoJob);
+      sessionStorage.setItem('creatorai:last-script-video-job', JSON.stringify(demoJob));
       setActiveSceneId(null);
     } catch (err) {
       setError('Could not load Demo job.');

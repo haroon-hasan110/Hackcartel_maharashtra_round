@@ -172,13 +172,13 @@ export const ContentMap: React.FC = () => {
         <div>
           <span className="text-[11px] text-neutral-400 block font-mono uppercase tracking-wider">Topics</span>
           <span className="text-white font-semibold block mt-0.5">
-            {activeProject.analysis?.topics.length || 4} Detected
+            {activeProject.analysis?.topics?.length || 4} Detected
           </span>
         </div>
         <div>
           <span className="text-[11px] text-neutral-400 block font-mono uppercase tracking-wider">Clip Opportunities</span>
           <span className="text-cyan-400 font-semibold block mt-0.5">
-            {activeProject.analysis?.clipOpportunities.length || 3} High Signal
+            {activeProject.analysis?.clipOpportunities?.length || 3} High Signal
           </span>
         </div>
         <div>

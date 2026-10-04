@@ -42,7 +42,7 @@ export const Dashboard: React.FC = () => {
     },
     {
       title: 'Adapt',
-      description: 'Auto-frame for 9:16 Reels, Shorts, and LinkedIn posts',
+      description: 'Auto-frame for 9:16 Reels, Shorts, and X posts',
       metric: 'Multi-platform',
     },
     {

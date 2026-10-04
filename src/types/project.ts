@@ -46,7 +46,7 @@ export interface ClipCandidate {
 export interface PlatformAdaptation {
   id: string;
   clipId: string;
-  platform: 'instagram' | 'youtube' | 'linkedin' | 'x';
+  platform: 'instagram' | 'youtube' | 'x';
   format: string; // e.g. '9:16 Vertical Video'
   hook: string;
   title?: string;

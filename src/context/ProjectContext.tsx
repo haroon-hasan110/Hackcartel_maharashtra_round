@@ -16,6 +16,7 @@ export type AppRoute =
   | 'studio'
   | 'script-to-video'
   | 'repurpose'
+  | 'post-automation'
   | 'assets'
   | 'settings'
   | 'project-detail';

@@ -13,9 +13,15 @@ import { ContentMap } from './components/content-map/ContentMap';
 import { CreatorStudio } from './components/studio/CreatorStudio';
 import { MorphicStudio } from './components/morphic/MorphicStudio';
 import { Repurpose } from './components/repurpose/Repurpose';
+import { PostAutomation } from './components/automation/PostAutomation';
 import { Assets } from './components/assets/Assets';
 import { Settings } from './components/settings/Settings';
-import { supabase } from './lib/supabase';
+import {
+  getSupabaseOAuthRedirectUrl,
+  hasPlaceholderSupabaseUrl,
+  hasSupabaseConfig,
+  supabase,
+} from './lib/supabase';
 
 // ============================================================================
 // Cinematic Landing Page Hero
@@ -46,8 +52,19 @@ const LandingHero: React.FC = () => {
   };
 
   const handleGoogleLogin = async () => {
-    if (!supabase) {
-      showNotification('Google auth is not enabled yet');
+    if (!hasSupabaseConfig) {
+      showNotification('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+      return;
+    }
+
+    if (hasPlaceholderSupabaseUrl || !supabase) {
+      showNotification('Set your real Supabase project URL before Google sign-in');
+      return;
+    }
+
+    const redirectTo = getSupabaseOAuthRedirectUrl();
+    if (!redirectTo) {
+      showNotification('Unable to resolve OAuth redirect URL');
       return;
     }
 
@@ -55,13 +72,13 @@ const LandingHero: React.FC = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo,
       },
     });
 
     if (error) {
       console.error('Google sign-in failed:', error);
-      showNotification('Google auth is not enabled in Supabase');
+      showNotification('Google auth failed. Check Supabase Google provider + redirect URLs.');
     }
 
     setAuthLoading(false);
@@ -518,6 +535,8 @@ const AppContent: React.FC = () => {
         return <MorphicStudio />;
       case 'repurpose':
         return <Repurpose />;
+      case 'post-automation':
+        return <PostAutomation />;
       case 'assets':
         return <Assets />;
       case 'settings':
