@@ -4,6 +4,7 @@ import {
   FolderKanban,
   MapPin,
   Film,
+  Clapperboard,
   Repeat,
   Library,
   Settings,
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
     { label: 'Projects', route: 'projects', icon: FolderKanban },
     { label: 'Content Map', route: 'content-map', icon: MapPin },
     { label: 'Creator Studio', route: 'studio', icon: Film },
+    { label: 'Script to Video', route: 'script-to-video', icon: Clapperboard },
     { label: 'Repurpose', route: 'repurpose', icon: Repeat },
     { label: 'Assets', route: 'assets', icon: Library },
   ];
@@ -53,7 +55,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onCloseMobile })
         color: 'var(--color-text-main)',
       }}
     >
-      <div className="p-4 flex flex-col gap-5">
+      <div className="p-4 flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto">
         {/* Clean Logo */}
         <div className="flex items-center justify-between px-2 pt-1">
           <button

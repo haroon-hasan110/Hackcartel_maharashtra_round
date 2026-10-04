@@ -14,6 +14,7 @@ export type AppRoute =
   | 'processing'
   | 'content-map'
   | 'studio'
+  | 'script-to-video'
   | 'repurpose'
   | 'assets'
   | 'settings'

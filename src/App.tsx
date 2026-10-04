@@ -11,6 +11,7 @@ import { NewProject } from './components/upload/NewProject';
 import { ProcessingExperience } from './components/processing/ProcessingExperience';
 import { ContentMap } from './components/content-map/ContentMap';
 import { CreatorStudio } from './components/studio/CreatorStudio';
+import { MorphicStudio } from './components/morphic/MorphicStudio';
 import { Repurpose } from './components/repurpose/Repurpose';
 import { Assets } from './components/assets/Assets';
 import { Settings } from './components/settings/Settings';
@@ -513,6 +514,8 @@ const AppContent: React.FC = () => {
         return <ContentMap />;
       case 'studio':
         return <CreatorStudio />;
+      case 'script-to-video':
+        return <MorphicStudio />;
       case 'repurpose':
         return <Repurpose />;
       case 'assets':

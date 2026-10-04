@@ -4,11 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "node server.js",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "node server.js --production",
+    "start": "node server.js --production",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:backend": "python -m pytest backend/tests -q",
+    "test:morphic": "node scripts/smoke-morphic.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
