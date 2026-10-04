@@ -1,4 +1,7 @@
 import { GeneratedAsset } from '../types/project';
+import aiAgentsThumbnail from '../assets/images/thumb_ai_agents_1791027508742.jpg';
+import buildPublicThumbnail from '../assets/images/thumb_build_public_1791027529197.jpg';
+import startupLessonsThumbnail from '../assets/images/thumb_startup_lessons_1791027549418.jpg';
 
 export const mockAssets: GeneratedAsset[] = [
   {
@@ -13,7 +16,7 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'AI Agents Podcast',
     sourceTimeRange: '02:14 → 02:49',
     createdAt: 'Today, 10:24 AM',
-    thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+    thumbnailUrl: aiAgentsThumbnail,
   },
   {
     id: 'ast-2',
@@ -27,7 +30,7 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'AI Agents Podcast',
     sourceTimeRange: '04:08 → 04:42',
     createdAt: 'Today, 10:25 AM',
-    thumbnailUrl: '/src/assets/images/thumb_startup_lessons_1791027549418.jpg',
+    thumbnailUrl: startupLessonsThumbnail,
   },
   {
     id: 'ast-3',
@@ -41,7 +44,7 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'AI Agents Podcast',
     sourceTimeRange: '06:21 → 06:58',
     createdAt: 'Today, 10:25 AM',
-    thumbnailUrl: '/src/assets/images/thumb_build_public_1791027529197.jpg',
+    thumbnailUrl: buildPublicThumbnail,
   },
   {
     id: 'ast-4',
@@ -81,7 +84,7 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'AI Agents Podcast',
     sourceTimeRange: 'Full Source',
     createdAt: 'Today, 10:20 AM',
-    thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+    thumbnailUrl: aiAgentsThumbnail,
   },
   {
     id: 'ast-7',
@@ -95,7 +98,7 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'Build in Public — Episode 07',
     sourceTimeRange: '03:12 → 04:00',
     createdAt: 'Yesterday, 4:15 PM',
-    thumbnailUrl: '/src/assets/images/thumb_build_public_1791027529197.jpg',
+    thumbnailUrl: buildPublicThumbnail,
   },
   {
     id: 'ast-8',
@@ -109,6 +112,6 @@ export const mockAssets: GeneratedAsset[] = [
     sourceProjectTitle: 'Startup Lessons',
     sourceTimeRange: '01:45 → 02:14',
     createdAt: 'Oct 1, 2026',
-    thumbnailUrl: '/src/assets/images/thumb_startup_lessons_1791027549418.jpg',
+    thumbnailUrl: startupLessonsThumbnail,
   },
 ];

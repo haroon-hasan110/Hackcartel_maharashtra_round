@@ -4,6 +4,7 @@ import { mockAiAgentsAnalysis } from '../data/mockAnalysis';
 import { mockAssets } from '../data/mockAssets';
 import { supabase, hasSupabaseConfig } from '../lib/supabase';
 import { generateLocalJson, generateLocalText } from './ollama';
+import aiAgentsThumbnail from '../assets/images/thumb_ai_agents_1791027508742.jpg';
 
 export const AI_MODE = 'ollama';
 
@@ -179,13 +180,13 @@ const normalizeProject = (row: any): Project | null => {
       aspectRatio: row.source_video?.aspectRatio || '16:9',
       localFile: undefined,
       objectUrl: row.source_video?.objectUrl,
-      thumbnailUrl: row.source_video?.thumbnailUrl || '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+      thumbnailUrl: row.source_video?.thumbnailUrl || aiAgentsThumbnail,
     },
     scriptText: row.script_text || '',
     analysis: row.analysis || undefined,
     generatedClipsCount: Number(row.generated_clips_count || 0),
     totalAssetsCount: Number(row.total_assets_count || 0),
-    thumbnailUrl: row.thumbnail_url || '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+    thumbnailUrl: row.thumbnail_url || aiAgentsThumbnail,
   };
 };
 
@@ -299,13 +300,13 @@ class ContentApiService {
               : '1.42 GB',
             aspectRatio: '16:9',
             objectUrl: payload.sourceUrl,
-            thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+            thumbnailUrl: aiAgentsThumbnail,
           },
           script_text: payload.scriptText || '',
           analysis: null,
           generated_clips_count: 0,
           total_assets_count: 0,
-          thumbnail_url: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+          thumbnail_url: aiAgentsThumbnail,
         };
 
         const { data, error } = await supabase
@@ -340,12 +341,12 @@ class ContentApiService {
         aspectRatio: '16:9',
         localFile: payload.sourceFile,
         objectUrl: payload.sourceUrl,
-        thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+        thumbnailUrl: aiAgentsThumbnail,
       },
       scriptText: payload.scriptText,
       generatedClipsCount: 0,
       totalAssetsCount: 0,
-      thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+      thumbnailUrl: aiAgentsThumbnail,
     };
 
     this.projects.unshift(newProject);

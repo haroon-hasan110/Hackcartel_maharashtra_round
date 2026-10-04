@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
 import { api, YouTubeVideo } from '../../services/api';
+import aiAgentsThumbnail from '../../assets/images/thumb_ai_agents_1791027508742.jpg';
 
 export const Dashboard: React.FC = () => {
   const { projects, projectsLoaded, selectProject, navigateTo } = useProject();
@@ -270,7 +271,7 @@ export const Dashboard: React.FC = () => {
               style={{ borderColor: 'var(--color-border)' }}
             >
               <img
-                src="/src/assets/images/thumb_ai_agents_1791027508742.jpg"
+                src={aiAgentsThumbnail}
                 alt="AI Agents Podcast Thumbnail"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"

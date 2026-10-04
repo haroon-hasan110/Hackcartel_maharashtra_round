@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useProject, ColorTheme } from '../../context/ProjectContext';
 import { supabase } from '../../lib/supabase';
+import creatorAvatar from '../../assets/images/avatar_creator_1791027561231.jpg';
 
 interface TopBarProps {
   onToggleMobile: () => void;
@@ -77,7 +78,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onToggleMobile }) => {
     setAuthUser(null);
   };
 
-  const avatarUrl = authUser?.user_metadata?.avatar_url || '/src/assets/images/avatar_creator_1791027561231.jpg';
+  const avatarUrl = authUser?.user_metadata?.avatar_url || creatorAvatar;
 
   const themeOptions: {
     id: ColorTheme;

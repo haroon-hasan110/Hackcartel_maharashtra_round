@@ -1,5 +1,8 @@
 import { Project } from '../types/project';
 import { mockAiAgentsAnalysis } from './mockAnalysis';
+import aiAgentsThumbnail from '../assets/images/thumb_ai_agents_1791027508742.jpg';
+import buildPublicThumbnail from '../assets/images/thumb_build_public_1791027529197.jpg';
+import startupLessonsThumbnail from '../assets/images/thumb_startup_lessons_1791027549418.jpg';
 
 export const mockProjects: Project[] = [
   {
@@ -14,7 +17,7 @@ export const mockProjects: Project[] = [
       duration: 522, // 8:42
       sizeFormatted: '1.42 GB',
       aspectRatio: '16:9',
-      thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+      thumbnailUrl: aiAgentsThumbnail,
     },
     scriptText: `[Alex]: Welcome back to episode 42. Today we are diving into autonomous workflows and small team leverage.
 [Elena]: Small teams are entering a completely different operating reality. Instead of hiring five generalists, you orchestrate specialized agentic pipelines that run continuously without losing context.
@@ -23,7 +26,7 @@ export const mockProjects: Project[] = [
     analysis: mockAiAgentsAnalysis,
     generatedClipsCount: 3,
     totalAssetsCount: 11,
-    thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+    thumbnailUrl: aiAgentsThumbnail,
   },
   {
     id: 'proj-build-public',
@@ -37,11 +40,11 @@ export const mockProjects: Project[] = [
       duration: 866, // 14:26
       sizeFormatted: '2.18 GB',
       aspectRatio: '16:9',
-      thumbnailUrl: '/src/assets/images/thumb_build_public_1791027529197.jpg',
+      thumbnailUrl: buildPublicThumbnail,
     },
     generatedClipsCount: 5,
     totalAssetsCount: 16,
-    thumbnailUrl: '/src/assets/images/thumb_build_public_1791027529197.jpg',
+    thumbnailUrl: buildPublicThumbnail,
   },
   {
     id: 'proj-startup-lessons',
@@ -55,10 +58,10 @@ export const mockProjects: Project[] = [
       duration: 378, // 6:18
       sizeFormatted: '980 MB',
       aspectRatio: '16:9',
-      thumbnailUrl: '/src/assets/images/thumb_startup_lessons_1791027549418.jpg',
+      thumbnailUrl: startupLessonsThumbnail,
     },
     generatedClipsCount: 2,
     totalAssetsCount: 7,
-    thumbnailUrl: '/src/assets/images/thumb_startup_lessons_1791027549418.jpg',
+    thumbnailUrl: startupLessonsThumbnail,
   },
 ];

@@ -1,4 +1,7 @@
 import { ContentAnalysis, TimelineSegment, Topic, ClipCandidate, TranscriptSegment } from '../types/project';
+import aiAgentsThumbnail from '../assets/images/thumb_ai_agents_1791027508742.jpg';
+import buildPublicThumbnail from '../assets/images/thumb_build_public_1791027529197.jpg';
+import startupLessonsThumbnail from '../assets/images/thumb_startup_lessons_1791027549418.jpg';
 
 export const mockAiAgentsTimeline: TimelineSegment[] = [
   {
@@ -121,7 +124,7 @@ export const mockAiAgentsClips: ClipCandidate[] = [
     aspectRatio: '9:16',
     durationSeconds: 35,
     videoUrl: '',
-    thumbnailUrl: '/src/assets/images/thumb_ai_agents_1791027508742.jpg',
+    thumbnailUrl: aiAgentsThumbnail,
   },
   {
     id: 'clip-2',
@@ -145,7 +148,7 @@ export const mockAiAgentsClips: ClipCandidate[] = [
     aspectRatio: '9:16',
     durationSeconds: 34,
     videoUrl: '',
-    thumbnailUrl: '/src/assets/images/thumb_startup_lessons_1791027549418.jpg',
+    thumbnailUrl: startupLessonsThumbnail,
   },
   {
     id: 'clip-3',
@@ -169,7 +172,7 @@ export const mockAiAgentsClips: ClipCandidate[] = [
     aspectRatio: '9:16',
     durationSeconds: 37,
     videoUrl: '',
-    thumbnailUrl: '/src/assets/images/thumb_build_public_1791027529197.jpg',
+    thumbnailUrl: buildPublicThumbnail,
   },
 ];
 
