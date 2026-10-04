@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import json
 import logging
 import os
@@ -117,9 +116,6 @@ def repurpose_linkedin(payload: RepurposeRequest) -> dict[str, Any]:
             status_code=500,
             detail="Failed to generate and save LinkedIn adaptation",
         ) from error
-=======
-from __future__ import annotations
-
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
@@ -136,7 +132,6 @@ from backend.youtube_service import (
     youtube_credentials_ready,
 )
 
-app = FastAPI(title="YouTube Integration API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -241,4 +236,3 @@ async def upload(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Upload error: {exc}") from exc
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)

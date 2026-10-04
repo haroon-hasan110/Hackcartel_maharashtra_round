@@ -5,15 +5,12 @@ import {
   ArrowRight,
   Layers,
   ChevronRight,
-<<<<<<< HEAD
-=======
   Sparkles,
   Search,
   Loader2,
   Eye,
   Heart,
   MessageCircle,
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
 import { api, YouTubeVideo } from '../../services/api';
@@ -64,7 +61,6 @@ export const Dashboard: React.FC = () => {
     navigateTo('content-map');
   };
 
-<<<<<<< HEAD
   if (!projectsLoaded) {
     return (
       <div className="py-20 text-center text-sm" style={{ color: 'var(--color-text-muted)' }} role="status">
@@ -115,7 +111,6 @@ export const Dashboard: React.FC = () => {
       </div>
     );
   }
-=======
   const loadRecommendations = async () => {
     const query = recommendationQuery.trim();
     if (!query) return;
@@ -141,7 +136,6 @@ export const Dashboard: React.FC = () => {
   };
 
   const formatNumber = (value?: number) => value == null ? '--' : new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 
   return (
     <div className="space-y-8 pb-16">

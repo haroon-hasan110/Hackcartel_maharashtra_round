@@ -1,20 +1,5 @@
-<<<<<<< HEAD
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowDownToLine, Maximize, Pause, Play, Redo2, RotateCcw, Save, Undo2, Volume2, VolumeX, X } from 'lucide-react';
-=======
-import React, { useState, useEffect, useRef } from 'react';
-import {
-    Play,
-    Pause,
-    RotateCcw,
-    RefreshCw,
-    Check,
-    Download,
-    Sliders,
-    Upload,
-    Loader2,
-} from 'lucide-react';
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
+import { ArrowDownToLine, Loader2, Maximize, Pause, Play, Redo2, RotateCcw, Save, Undo2, Upload, Volume2, VolumeX, X } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
 import { api } from '../../services/api';
 import { createClipExportJob, downloadEditRecipe } from '../../services/clipExport';
@@ -59,27 +44,15 @@ export const CreatorStudio: React.FC = () => {
   const [saveStatus, setSaveStatus] = useState<'saved' | 'unsaved' | 'saving'>('unsaved');
   const [showExport, setShowExport] = useState(false);
   const [exportJob, setExportJob] = useState<ClipExportJob | null>(null);
+  const [isUploadingToYoutube, setIsUploadingToYoutube] = useState(false);
+  const [youtubeUploadProgress, setYoutubeUploadProgress] = useState(0);
+  const [youtubeReady, setYoutubeReady] = useState(false);
+  const [youtubeStatusMessage, setYoutubeStatusMessage] = useState('Checking YouTube configuration...');
+  const youtubeFileInputRef = useRef<HTMLInputElement>(null);
 
-<<<<<<< HEAD
   const sourceUrl = sourceOverride || activeProject.sourceVideo.objectUrl || '';
   const sourceDuration = duration || activeProject.sourceVideo.duration || 0;
   const clips = activeProject.analysis?.clipOpportunities || [];
-=======
-    const [startTime, setStartTime] = useState(activeClip.startTime);
-    const [endTime, setEndTime] = useState(activeClip.endTime);
-    const [hookText, setHookText] = useState(activeClip.hook);
-    const [captionText, setCaptionText] = useState(activeClip.caption);
-    const [aspectRatio, setAspectRatio] = useState<'9:16' | '16:9' | '1:1'>(activeClip.aspectRatio || '9:16');
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [currentPlayTime, setCurrentPlayTime] = useState(activeClip.startTime);
-    const [isRegeneratingHook, setIsRegeneratingHook] = useState(false);
-    const [isUploadingToYoutube, setIsUploadingToYoutube] = useState(false);
-    const [youtubeUploadProgress, setYoutubeUploadProgress] = useState(0);
-    const [youtubeReady, setYoutubeReady] = useState(true);
-    const [youtubeStatusMessage, setYoutubeStatusMessage] = useState('');
-    const [hasUnsavedEdits, setHasUnsavedEdits] = useState(false);
-    const youtubeFileInputRef = useRef<HTMLInputElement | null>(null);
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 
   const updateEditor = useCallback((change: Partial<EditorState> | ((current: EditorState) => EditorState)) => {
     const previous = editorRef.current;
@@ -92,7 +65,6 @@ export const CreatorStudio: React.FC = () => {
     setSaveStatus('unsaved');
   }, []);
 
-<<<<<<< HEAD
   const seek = useCallback((time: number) => {
     const video = videoRef.current;
     if (!video) return;
@@ -100,33 +72,21 @@ export const CreatorStudio: React.FC = () => {
     video.currentTime = Math.max(0, Math.min(max || time, time));
     setPlayhead(video.currentTime);
   }, [sourceDuration]);
-=======
-    useEffect(() => {
-        let ignore = false;
-
-        const checkYoutubeStatus = async () => {
-            try {
-                const status = await api.getYouTubeConfigStatus();
-                if (!ignore) {
-                    setYoutubeReady(status.ready);
-                    setYoutubeStatusMessage(status.message);
-                }
-            } catch {
-                if (!ignore) {
-                    setYoutubeReady(false);
-                    setYoutubeStatusMessage('YouTube upload is unavailable until backend credentials are configured.');
-                }
-            }
-        };
-
-        checkYoutubeStatus();
-        return () => {
-            ignore = true;
-        };
-    }, []);
-
-    const clipDuration = Math.max(1, endTime - startTime);
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
+  useEffect(() => {
+    let ignore = false;
+    void api.getYouTubeConfigStatus().then((status) => {
+      if (!ignore) {
+        setYoutubeReady(status.ready);
+        setYoutubeStatusMessage(status.message);
+      }
+    }).catch(() => {
+      if (!ignore) {
+        setYoutubeReady(false);
+        setYoutubeStatusMessage('YouTube upload is unavailable until backend credentials are configured.');
+      }
+    });
+    return () => { ignore = true; };
+  }, []);
 
   const togglePlayback = useCallback(async () => {
     const video = videoRef.current;
@@ -287,46 +247,34 @@ export const CreatorStudio: React.FC = () => {
     setSaveStatus('unsaved');
   };
 
-<<<<<<< HEAD
   const resetEdit = () => {
     const original = createInitialEditorState(activeProject.id, originalClipRef.current, sourceUrl);
     updateEditor(original);
     seek(original.startTime);
   };
-=======
-    const handleYoutubeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files?.[0];
-        if (!selectedFile) return;
+  const handleYoutubeUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    if (!selectedFile) return;
 
-        try {
-            setIsUploadingToYoutube(true);
-            setYoutubeUploadProgress(0);
-            const response = await api.uploadToYouTube({
-                file: selectedFile,
-                title: `${activeProject.title} - ${activeClip.title}`,
-                description: `${hookText}\n\n${captionText}\n\nGenerated by CreatorAI`,
-                privacyStatus: 'private',
-                tags: ['creatorai', activeProject.contentType, activeClip.platform || 'youtube'],
-                onProgress: setYoutubeUploadProgress,
-            });
-
-            showNotification(`Upload sent to YouTube successfully (${response.result?.id ?? 'video uploaded'})`);
-        } catch (error) {
-            const message = error instanceof Error ? error.message : 'YouTube upload failed';
-            showNotification(message);
-        } finally {
-            setIsUploadingToYoutube(false);
-            setYoutubeUploadProgress(0);
-            event.target.value = '';
-        }
-    };
-
-    const getPlayerContainerStyle = () => {
-        if (aspectRatio === '9:16') return 'aspect-[9/16] max-h-[500px] mx-auto';
-        if (aspectRatio === '1:1') return 'aspect-square max-h-[440px] mx-auto';
-        return 'aspect-video w-full';
-    };
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
+    try {
+      setIsUploadingToYoutube(true);
+      const response = await api.uploadToYouTube({
+        file: selectedFile,
+        title: `${activeProject.title} - ${activeClip.title}`,
+        description: `${editor.hook}\n\n${editor.caption}\n\nGenerated by CreatorAI`,
+        privacyStatus: 'private',
+        tags: ['creatorai', activeProject.contentType, 'youtube'],
+        onProgress: setYoutubeUploadProgress,
+      });
+      showNotification(`Upload sent to YouTube successfully (${response.result?.id ?? 'video uploaded'})`);
+    } catch (error) {
+      showNotification(error instanceof Error ? error.message : 'YouTube upload failed');
+    } finally {
+      setIsUploadingToYoutube(false);
+      setYoutubeUploadProgress(0);
+      event.target.value = '';
+    }
+  };
 
   const saveEdit = async () => {
     if (editor.startTime < 0 || editor.endTime <= editor.startTime || (sourceDuration && editor.endTime > sourceDuration)) {
@@ -350,7 +298,6 @@ export const CreatorStudio: React.FC = () => {
     if (updates.startTime !== undefined) seek(updates.startTime);
   };
 
-<<<<<<< HEAD
   const refreshSuggestions = async () => {
     setGenerating(true);
     try {
@@ -365,67 +312,6 @@ export const CreatorStudio: React.FC = () => {
       setGenerating(false);
     }
   };
-=======
-                <div className="flex items-center gap-2">
-                    {hasUnsavedEdits && (
-                        <span className="text-[11px] text-amber-500 font-mono hidden md:inline">● Unsaved modifications</span>
-                    )}
-                    <button
-                        type="button"
-                        onClick={handleApplyEdits}
-                        className="clay-button-primary flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold cursor-pointer active:scale-95 shadow-sm"
-                    >
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Apply Changes</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => openExport(activeClip)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors border"
-                        style={{
-                            backgroundColor: 'rgba(255,255,255,0.1)',
-                            borderColor: 'rgba(120,103,90,0.16)',
-                            color: 'var(--color-text-main)',
-                        }}
-                    >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Export Clip</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            if (!youtubeReady) {
-                                showNotification(youtubeStatusMessage || 'YouTube credentials are not configured yet.');
-                                return;
-                            }
-                            youtubeFileInputRef.current?.click();
-                        }}
-                        disabled={isUploadingToYoutube || !youtubeReady}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors border disabled:opacity-60"
-                        style={{
-                            backgroundColor: youtubeReady ? 'rgba(185,237,121,0.12)' : 'rgba(180,180,180,0.08)',
-                            borderColor: youtubeReady ? 'rgba(185,237,121,0.35)' : 'rgba(255,255,255,0.12)',
-                            color: youtubeReady ? 'var(--color-text-main)' : 'var(--color-text-muted)',
-                        }}
-                    >
-                        {isUploadingToYoutube ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-                        <span>{isUploadingToYoutube ? youtubeUploadProgress <= 1 ? 'Starting upload...' : `Uploading ${youtubeUploadProgress}%` : youtubeReady ? 'Upload to YouTube' : 'YouTube not configured'}</span>
-                    </button>
-                    {!youtubeReady && (
-                        <p className="text-[10px] mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                            {youtubeStatusMessage || 'Add valid YouTube OAuth credentials in the backend .env file to enable uploads.'}
-                        </p>
-                    )}
-                    <input
-                        ref={youtubeFileInputRef}
-                        type="file"
-                        accept="video/*"
-                        className="hidden"
-                        onChange={handleYoutubeUpload}
-                    />
-                </div>
-            </div>
->>>>>>> 848abf6 (feat: add YouTube OAuth and video upload integration)
 
   const markMoment = () => {
     const time = videoRef.current?.currentTime ?? playhead;
@@ -458,7 +344,7 @@ export const CreatorStudio: React.FC = () => {
           <button type="button" className="studio-icon-button" aria-label="Redo" title="Redo" onClick={redo} disabled={!redoRef.current.length}><Redo2 /></button>
           <button type="button" className="studio-button studio-button-secondary" onClick={resetEdit}><RotateCcw /> Reset edit</button>
           <button type="button" className="studio-button studio-button-secondary" onClick={() => void saveEdit()} disabled={saveStatus === 'saving'}><Save /> Save Edit</button>
-            <button type="button" className="studio-button studio-button-primary" onClick={() => { setShowExport(true); setExportJob(null); }} disabled={!sourceUrl} title={!sourceUrl ? 'Select a source video before exporting' : 'Export clip settings'}><ArrowDownToLine /> Export Clip</button>
+          <button type="button" className="studio-button studio-button-primary" onClick={() => { setShowExport(true); setExportJob(null); }} disabled={!sourceUrl} title={!sourceUrl ? 'Select a source video before exporting' : 'Export clip settings'}><ArrowDownToLine /> Export Clip</button>
         </div>
       </header>
 
