@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Sparkles,
   Copy,
@@ -15,17 +15,49 @@ import {
   Share2,
 } from 'lucide-react';
 import { useProject } from '../../context/ProjectContext';
-import { mockPlatformAdaptations } from '../../data/mockAdaptations';
-import { PlatformAdaptation } from '../../types/project';
+import { api } from '../../services/api';
+import { ClipCandidate, PlatformAdaptation } from '../../types/project';
+
+const platforms: PlatformAdaptation['platform'][] = ['instagram', 'youtube', 'linkedin'];
+
+const createAdaptationDraft = (
+  clip: ClipCandidate,
+  platform: PlatformAdaptation['platform']
+): PlatformAdaptation => {
+  const formatByPlatform: Record<PlatformAdaptation['platform'], string> = {
+    instagram: '9:16 Vertical Reel',
+    youtube: '9:16 YouTube Short',
+    linkedin: 'Professional editorial post with clip',
+    x: 'Concise post with video',
+  };
+  const body = clip.caption || clip.transcriptExcerpt;
+  return {
+    id: `draft-${clip.id}-${platform}`,
+    clipId: clip.id,
+    platform,
+    format: formatByPlatform[platform],
+    hook: clip.hook,
+    title: platform === 'youtube' ? clip.title : undefined,
+    body,
+    hashtags: [],
+  };
+};
 
 export const Repurpose: React.FC = () => {
   const { activeProject, activeClip, openExport, showNotification } = useProject();
 
-  const [adaptations, setAdaptations] = useState<PlatformAdaptation[]>(mockPlatformAdaptations);
+  const [adaptations, setAdaptations] = useState<PlatformAdaptation[]>(() =>
+    platforms.map((platform) => createAdaptationDraft(activeClip, platform))
+  );
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isGeneratingAll, setIsGeneratingAll] = useState(false);
+  const [generatingPlatform, setGeneratingPlatform] = useState<PlatformAdaptation['platform'] | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [previewPlatform, setPreviewPlatform] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAdaptations(platforms.map((platform) => createAdaptationDraft(activeClip, platform)));
+  }, [activeClip.id]);
 
   const formatSeconds = (sec: number) => {
     const m = Math.floor(sec / 60);
@@ -42,12 +74,23 @@ export const Repurpose: React.FC = () => {
     }, 2000);
   };
 
-  const handleGenerateAll = () => {
+  const handleGenerateAll = async () => {
     setIsGeneratingAll(true);
-    setTimeout(() => {
+    try {
+      for (const platform of platforms) {
+        const adaptation = await api.generatePlatformAdaptation(activeClip.id, platform, activeClip);
+        setAdaptations((previous) => [
+          ...previous.filter((item) => item.platform !== platform),
+          adaptation,
+        ]);
+      }
+      showNotification('Qwen generated all platform variations');
+    } catch (error) {
+      console.error('Qwen platform generation failed:', error);
+      showNotification('Could not generate all variations. Check that Ollama is running.');
+    } finally {
       setIsGeneratingAll(false);
-      showNotification('All platform variations synthesized and synced with source');
-    }, 1200);
+    }
   };
 
   const handleUpdateBody = (id: string, newBody: string) => {
@@ -56,13 +99,26 @@ export const Repurpose: React.FC = () => {
     );
   };
 
-  const handleRegenerateItem = (id: string) => {
-    showNotification('Variation re-synthesized for platform algorithm');
+  const handleRegenerateItem = async (platform: PlatformAdaptation['platform']) => {
+    setGeneratingPlatform(platform);
+    try {
+      const adaptation = await api.generatePlatformAdaptation(activeClip.id, platform, activeClip);
+      setAdaptations((previous) => [
+        ...previous.filter((item) => item.platform !== platform),
+        adaptation,
+      ]);
+      showNotification(`Qwen regenerated ${platform} copy`);
+    } catch (error) {
+      console.error(`Qwen ${platform} generation failed:`, error);
+      showNotification(`Could not regenerate ${platform} copy. Check that Ollama is running.`);
+    } finally {
+      setGeneratingPlatform(null);
+    }
   };
 
-  const igAdaptation = adaptations.find((a) => a.platform === 'instagram') || adaptations[0];
-  const ytAdaptation = adaptations.find((a) => a.platform === 'youtube') || adaptations[1];
-  const liAdaptation = adaptations.find((a) => a.platform === 'linkedin') || adaptations[2];
+  const igAdaptation = adaptations.find((a) => a.platform === 'instagram')!;
+  const ytAdaptation = adaptations.find((a) => a.platform === 'youtube')!;
+  const liAdaptation = adaptations.find((a) => a.platform === 'linkedin')!;
 
   return (
     <div className="space-y-6 pb-20">
@@ -84,8 +140,8 @@ export const Repurpose: React.FC = () => {
         </div>
 
         <button
-          onClick={handleGenerateAll}
-          disabled={isGeneratingAll}
+          onClick={() => void handleGenerateAll()}
+          disabled={isGeneratingAll || generatingPlatform !== null}
           className="clay-button-primary flex items-center gap-2 px-4 py-2 text-xs font-semibold disabled:opacity-50 transition-all self-start md:self-auto cursor-pointer active:scale-95 shadow-sm"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isGeneratingAll ? 'animate-spin' : ''}`} />
@@ -179,11 +235,12 @@ export const Repurpose: React.FC = () => {
 
           <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
             <button
-              onClick={() => handleRegenerateItem(igAdaptation.id)}
-              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors"
+              onClick={() => void handleRegenerateItem('instagram')}
+              disabled={isGeneratingAll || generatingPlatform !== null}
+              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Regenerate</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${generatingPlatform === 'instagram' ? 'animate-spin' : ''}`} />
+              <span>{generatingPlatform === 'instagram' ? 'Generating...' : 'Regenerate'}</span>
             </button>
 
             <div className="flex items-center gap-2">
@@ -274,11 +331,12 @@ export const Repurpose: React.FC = () => {
 
           <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
             <button
-              onClick={() => handleRegenerateItem(ytAdaptation.id)}
-              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors"
+              onClick={() => void handleRegenerateItem('youtube')}
+              disabled={isGeneratingAll || generatingPlatform !== null}
+              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Regenerate</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${generatingPlatform === 'youtube' ? 'animate-spin' : ''}`} />
+              <span>{generatingPlatform === 'youtube' ? 'Generating...' : 'Regenerate'}</span>
             </button>
 
             <div className="flex items-center gap-2">
@@ -363,11 +421,12 @@ export const Repurpose: React.FC = () => {
 
           <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
             <button
-              onClick={() => handleRegenerateItem(liAdaptation.id)}
-              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors"
+              onClick={() => void handleRegenerateItem('linkedin')}
+              disabled={isGeneratingAll || generatingPlatform !== null}
+              className="text-neutral-400 hover:text-white flex items-center gap-1.5 transition-colors disabled:opacity-50"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Regenerate</span>
+              <RefreshCw className={`w-3.5 h-3.5 ${generatingPlatform === 'linkedin' ? 'animate-spin' : ''}`} />
+              <span>{generatingPlatform === 'linkedin' ? 'Generating...' : 'Regenerate'}</span>
             </button>
 
             <div className="flex items-center gap-2">

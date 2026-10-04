@@ -4,6 +4,7 @@ import { mockProjects } from '../data/mockProjects';
 import { mockAssets } from '../data/mockAssets';
 import { mockAiAgentsClips } from '../data/mockAnalysis';
 import { api } from '../services/api';
+import { hasSupabaseConfig } from '../lib/supabase';
 
 export type AppRoute =
   | 'landing'
@@ -28,6 +29,7 @@ interface ProjectContextType {
   setTheme: (theme: ColorTheme) => void;
   cycleTheme: () => void;
   projects: Project[];
+  projectsLoaded: boolean;
   activeProject: Project;
   selectProject: (projectId: string) => void;
   activeClip: ClipCandidate;
@@ -58,6 +60,25 @@ interface ProjectContextType {
 
 const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
 
+const emptyProjectTemplate: Project = {
+  id: '',
+  title: 'No project yet',
+  contentType: 'podcast',
+  status: 'draft',
+  createdAt: '',
+  updatedAt: '',
+  sourceVideo: {
+    filename: '',
+    duration: 0,
+    sizeFormatted: '',
+    aspectRatio: '16:9',
+  },
+  scriptText: '',
+  generatedClipsCount: 0,
+  totalAssetsCount: 0,
+  thumbnailUrl: '',
+};
+
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentRoute, setCurrentRoute] = useState<AppRoute>('landing');
   const [theme, setThemeState] = useState<ColorTheme>(() => {
@@ -83,11 +104,12 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   };
 
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
-  const [activeProjectId, setActiveProjectId] = useState<string>(mockProjects[0].id);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsLoaded, setProjectsLoaded] = useState(false);
+  const [activeProjectId, setActiveProjectId] = useState<string>('');
   const [activeClip, setActiveClip] = useState<ClipCandidate>(mockAiAgentsClips[0]);
   const [generatingClips, setGeneratingClips] = useState<Record<string, boolean>>({});
-  const [assets, setAssets] = useState<GeneratedAsset[]>(mockAssets);
+  const [assets, setAssets] = useState<GeneratedAsset[]>([]);
 
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [exportItem, setExportItem] = useState<ClipCandidate | GeneratedAsset | null>(null);
@@ -103,7 +125,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [notification, setNotification] = useState<string | null>(null);
 
   const activeProject =
-    projects.find((p) => p.id === activeProjectId) || projects[0];
+    projects.find((p) => p.id === activeProjectId) ||
+    projects[0] ||
+    (hasSupabaseConfig ? emptyProjectTemplate : mockProjects[0]);
 
   const showNotification = (msg: string) => {
     setNotification(msg);
@@ -157,7 +181,8 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const generateClip = async (clipId: string) => {
     setGeneratingClips((prev) => ({ ...prev, [clipId]: true }));
     try {
-      const result = await api.generateClip(clipId);
+      const clip = activeProject.analysis?.clipOpportunities.find((candidate) => candidate.id === clipId);
+      const result = await api.generateClip(clipId, clip);
       setProjects((prevProjects) =>
         prevProjects.map((proj) => {
           if (proj.id !== activeProject.id || !proj.analysis) return proj;
@@ -198,8 +223,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setProjects((prev) => [newProj, ...prev]);
     setActiveProjectId(newProj.id);
 
-    // AI Analysis simulation will complete and update project
-    setTimeout(async () => {
+    try {
       const analysis = await api.analyzeProject(newProj.id);
       setProjects((prev) =>
         prev.map((p) => (p.id === newProj.id ? { ...p, analysis, status: 'analyzed' } : p))
@@ -208,8 +232,15 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setActiveClip(analysis.clipOpportunities[0]);
       }
       setCurrentRoute('content-map');
-      showNotification('Pipeline compiled: Content Map is ready');
-    }, 4500);
+      showNotification('Qwen analysis complete: Content Map is ready');
+    } catch (error) {
+      console.error('Qwen analysis failed:', error);
+      setCurrentRoute('upload');
+      const message = error instanceof Error && error.message.startsWith('Add a transcript')
+        ? error.message
+        : 'Qwen analysis failed. Check that Ollama is running and the selected model is available.';
+      showNotification(message);
+    }
   };
 
   const openExport = (item?: ClipCandidate | GeneratedAsset) => {
@@ -221,6 +252,44 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setIsExportOpen(false);
     setExportItem(null);
   };
+
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const [loadedProjects, loadedAssets] = await Promise.all([
+          api.getProjects(),
+          api.getAssets(),
+        ]);
+
+        const safeProjects = hasSupabaseConfig ? loadedProjects : loadedProjects.length > 0 ? loadedProjects : mockProjects;
+        const safeAssets = hasSupabaseConfig ? loadedAssets : loadedAssets.length > 0 ? loadedAssets : mockAssets;
+
+        setProjects(safeProjects);
+        setAssets(safeAssets);
+        setActiveProjectId(safeProjects[0]?.id || '');
+        setProjectsLoaded(true);
+
+        if (safeProjects[0]?.analysis?.clipOpportunities?.[0]) {
+          setActiveClip(safeProjects[0].analysis.clipOpportunities[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load initial project data:', error);
+        if (hasSupabaseConfig) {
+          setProjects([]);
+          setAssets([]);
+          setActiveProjectId('');
+          setProjectsLoaded(true);
+          return;
+        }
+        setProjects(mockProjects);
+        setAssets(mockAssets);
+        setActiveProjectId(mockProjects[0].id);
+        setProjectsLoaded(true);
+      }
+    };
+
+    loadInitialData();
+  }, []);
 
   // Clean up object URLs on unmount
   useEffect(() => {
@@ -240,6 +309,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setTheme,
         cycleTheme,
         projects,
+        projectsLoaded,
         activeProject,
         selectProject,
         activeClip,

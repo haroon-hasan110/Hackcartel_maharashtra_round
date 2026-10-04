@@ -1,13 +1,151 @@
-import { Project, ContentAnalysis, ClipCandidate, PlatformAdaptation, GeneratedAsset } from '../types/project';
+import { Project, ContentAnalysis, ClipCandidate, PlatformAdaptation, GeneratedAsset, Topic, TimelineSegment, TranscriptSegment } from '../types/project';
 import { mockProjects } from '../data/mockProjects';
 import { mockAiAgentsAnalysis } from '../data/mockAnalysis';
-import { mockHooks, mockCaptions, mockPlatformAdaptations } from '../data/mockAdaptations';
 import { mockAssets } from '../data/mockAssets';
 import { supabase, hasSupabaseConfig } from '../lib/supabase';
+import { generateLocalJson, generateLocalText } from './ollama';
 
-export const AI_MODE = hasSupabaseConfig ? 'supabase' : 'mock';
+export const AI_MODE = 'ollama';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const platformFormats: Record<PlatformAdaptation['platform'], string> = {
+  instagram: '9:16 Vertical Reel',
+  youtube: '9:16 YouTube Short',
+  linkedin: 'Professional editorial post with clip',
+  x: 'Concise post with video',
+};
+
+interface LocalAnalysisDraft {
+  topics?: string[];
+  clips?: Array<{
+    title?: string;
+    start?: number;
+    end?: number;
+    topic?: string;
+    excerpt?: string;
+    hook?: string;
+  }>;
+  summary?: string;
+}
+
+const formatTime = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
+};
+
+const clampTime = (value: unknown, duration: number) => {
+  const parsed = Number(value);
+  return Math.max(0, Math.min(duration, Number.isFinite(parsed) ? parsed : 0));
+};
+
+function normalizeLocalAnalysis(
+  project: Project,
+  draft: LocalAnalysisDraft
+): ContentAnalysis {
+  const durationSeconds = project.sourceVideo.duration || 522;
+  const draftClips = Array.isArray(draft.clips) ? draft.clips : [];
+  const topicNames = (Array.isArray(draft.topics) ? draft.topics : [])
+    .filter((topic): topic is string => typeof topic === 'string' && Boolean(topic.trim()));
+
+  if (topicNames.length === 0 || draftClips.length === 0) {
+    throw new Error('Qwen returned incomplete analysis. Try again with a fuller transcript.');
+  }
+
+  const clipOpportunities = draftClips
+    .filter((clip) => Boolean(clip.title?.trim()) && Boolean(clip.excerpt?.trim()))
+    .map((clip, index) => {
+      const startTime = clampTime(clip.start, durationSeconds);
+      const endTime = Math.max(startTime, clampTime(clip.end, durationSeconds));
+      return {
+        id: `clip-${project.id}-${index + 1}`,
+        title: clip.title!.trim(),
+        startTime,
+        endTime,
+        topic: clip.topic || topicNames[0],
+        score: Math.max(60, 92 - index * 6),
+        selectionFactors: ['Transcript-supported moment'],
+        transcriptExcerpt: clip.excerpt!.trim(),
+        hook: clip.hook?.trim() || clip.title!.trim(),
+        caption: clip.excerpt!.trim(),
+        status: 'idle' as const,
+        aspectRatio: '9:16' as const,
+        durationSeconds: Math.round(Math.max(0, endTime - startTime)),
+        thumbnailUrl: project.thumbnailUrl,
+      };
+    })
+    .filter((clip) => clip.durationSeconds > 0);
+
+  if (clipOpportunities.length === 0) {
+    throw new Error('Qwen returned no usable clips. Try again with a fuller transcript.');
+  }
+
+  const topics: Topic[] = topicNames.slice(0, 3).map((name, index) => {
+    const relatedClips = clipOpportunities.filter((clip) => clip.topic.toLowerCase() === name.toLowerCase());
+    const firstClip = relatedClips[0] || clipOpportunities[0];
+    const lastClip = relatedClips[relatedClips.length - 1] || firstClip;
+    return {
+      id: `topic-${index + 1}`,
+      name,
+      relevance: Math.max(65, 94 - index * 8),
+      segmentCount: relatedClips.length,
+      timeRange: `${formatTime(firstClip.startTime)} - ${formatTime(lastClip.endTime)}`,
+    };
+  });
+
+  const timelineSegments: TimelineSegment[] = clipOpportunities.map((clip, index) => ({
+    id: `segment-${index + 1}`,
+    type: 'insight',
+    label: clip.title,
+    startTime: clip.startTime,
+    endTime: clip.endTime,
+    summary: clip.transcriptExcerpt,
+  }));
+  const transcripts: TranscriptSegment[] = clipOpportunities.map((clip, index) => ({
+    id: `transcript-${index + 1}`,
+    startTime: clip.startTime,
+    endTime: clip.endTime,
+    speaker: 'Speaker',
+    text: clip.transcriptExcerpt,
+  }));
+
+  return {
+    id: `analysis-${project.id}`,
+    projectId: project.id,
+    sourceVideoName: project.sourceVideo.filename,
+    durationSeconds,
+    topics,
+    timelineSegments,
+    clipOpportunities,
+    transcripts,
+    insights: {
+      primaryTopic: topics[0].name,
+      highPotentialClipsCount: clipOpportunities.filter((clip) => clip.score >= 80).length,
+      peakOpportunityRange: `${formatTime(clipOpportunities[0].startTime)} - ${formatTime(clipOpportunities[0].endTime)}`,
+      totalReusableAssets: clipOpportunities.length,
+      summary: draft.summary?.trim() || `Qwen identified ${clipOpportunities.length} clip opportunities from the supplied transcript.`,
+    },
+  };
+}
+
+async function analyzeTranscriptWithOllama(project: Project, transcript: string): Promise<ContentAnalysis> {
+  const maxCharacters = 24000;
+  const sourceText = transcript.slice(0, maxCharacters);
+  const truncationNote = transcript.length > maxCharacters
+    ? '\nOnly the first 24,000 characters are included.'
+    : '';
+  const draft = await generateLocalJson<LocalAnalysisDraft>(
+    'Analyze creator transcripts and return only valid JSON. Ground every topic, clip, hook, caption, and summary in the supplied text. Do not invent quotations or factual claims. Timestamps are rough estimates based on text order and total duration unless timestamps are explicitly present in the transcript.',
+    `Analyze this ${project.contentType} transcript for a ${durationSecondsLabel(project.sourceVideo.duration)} recording. Return compact JSON: {"topics":["short topic"],"clips":[{"title":"short title","start":0,"end":30,"topic":"topic","excerpt":"exact transcript quote","hook":"short hook"}],"summary":"one sentence"}. Provide at most 3 topics and 3 clips. Keep fields brief and times within the duration. Estimate times proportionally if the transcript has no timestamps.\n\nTranscript:\n${sourceText}${truncationNote}`
+  );
+
+  return normalizeLocalAnalysis(project, draft);
+}
+
+function durationSecondsLabel(seconds: number): string {
+  return `${Math.max(1, Math.round(seconds || 522))} second`;
+}
 
 const normalizeProject = (row: any): Project | null => {
   if (!row) return null;
@@ -73,6 +211,13 @@ export interface CreateProjectPayload {
 class ContentApiService {
   private projects: Project[] = [...mockProjects];
   private assets: GeneratedAsset[] = [...mockAssets];
+  private generatedClips = new Map<string, ClipCandidate>();
+
+  private findClip(clipId: string, clipContext?: ClipCandidate): ClipCandidate | undefined {
+    return (clipContext?.id === clipId ? clipContext : undefined)
+      || this.generatedClips.get(clipId)
+      || mockAiAgentsAnalysis.clipOpportunities.find((clip) => clip.id === clipId);
+  }
 
   async getProjects(): Promise<Project[]> {
     if (hasSupabaseConfig && supabase) {
@@ -85,8 +230,15 @@ class ContentApiService {
         if (!error && data) {
           return (data.map(normalizeProject).filter(Boolean) as Project[]) || [];
         }
+
+        if (error) {
+          console.error('Supabase getProjects returned an error:', error);
+        }
+
+        return [];
       } catch (error) {
         console.error('Supabase getProjects failed, falling back to mocks:', error);
+        return [];
       }
     }
 
@@ -102,8 +254,11 @@ class ContentApiService {
         if (!error && data) {
           return normalizeProject(data);
         }
+
+        return null;
       } catch (error) {
         console.error('Supabase getProjectById failed, falling back to mocks:', error);
+        return null;
       }
     }
 
@@ -183,59 +338,44 @@ class ContentApiService {
   }
 
   async analyzeProject(projectId: string): Promise<ContentAnalysis> {
+    const project = await this.getProjectById(projectId);
+    if (!project) throw new Error(`Project ${projectId} not found`);
+    const transcript = project.scriptText?.trim();
+    if (!transcript) {
+      throw new Error('Add a transcript or script to run Qwen analysis. Video transcription is not configured yet.');
+    }
+
+    const analysis = await analyzeTranscriptWithOllama(project, transcript);
+    analysis.clipOpportunities.forEach((clip) => this.generatedClips.set(clip.id, clip));
+
     if (hasSupabaseConfig && supabase) {
-      try {
-        const project = await this.getProjectById(projectId);
-        const analysis: ContentAnalysis = {
-          ...mockAiAgentsAnalysis,
-          id: `analysis-${projectId}`,
-          projectId,
-          sourceVideoName: project?.sourceVideo.filename || 'recording.mp4',
-          durationSeconds: project?.sourceVideo.duration || 522,
-        };
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          analysis,
+          status: 'analyzed',
+          generated_clips_count: analysis.clipOpportunities.length,
+          total_assets_count: analysis.insights.totalReusableAssets,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', projectId);
 
-        const { error } = await supabase
-          .from('projects')
-          .update({
-            analysis,
-            status: 'analyzed',
-            generated_clips_count: 1,
-            total_assets_count: 11,
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', projectId);
-
-        if (!error) {
-          return analysis;
-        }
-      } catch (error) {
-        console.error('Supabase analyzeProject failed, falling back to mocks:', error);
+      if (error) throw new Error(`Could not save Qwen analysis: ${error.message}`);
+    } else {
+      const localProject = this.projects.find((candidate) => candidate.id === projectId);
+      if (localProject) {
+        localProject.analysis = analysis;
+        localProject.status = 'analyzed';
+        localProject.generatedClipsCount = analysis.clipOpportunities.length;
+        localProject.totalAssetsCount = analysis.insights.totalReusableAssets;
       }
     }
-
-    await delay(1800);
-    const project = this.projects.find((p) => p.id === projectId);
-    const analysis: ContentAnalysis = {
-      ...mockAiAgentsAnalysis,
-      id: `analysis-${projectId}`,
-      projectId,
-      sourceVideoName: project?.sourceVideo.filename || 'recording.mp4',
-      durationSeconds: project?.sourceVideo.duration || 522,
-    };
-
-    if (project) {
-      project.analysis = analysis;
-      project.status = 'analyzed';
-      project.totalAssetsCount = 11;
-      project.generatedClipsCount = 1;
-    }
-
     return analysis;
   }
 
-  async generateClip(clipId: string): Promise<ClipCandidate> {
+  async generateClip(clipId: string, clipContext?: ClipCandidate): Promise<ClipCandidate> {
     await delay(1200);
-    const found = mockAiAgentsAnalysis.clipOpportunities.find((c) => c.id === clipId);
+    const found = this.findClip(clipId, clipContext);
     if (!found) {
       throw new Error(`Clip ${clipId} not found`);
     }
@@ -246,33 +386,56 @@ class ContentApiService {
     return updated;
   }
 
-  async generateHook(clipId: string): Promise<string> {
-    await delay(600);
-    const hooks = mockHooks.filter((h) => h.clipId === clipId || true);
-    const randomIndex = Math.floor(Math.random() * hooks.length);
-    return hooks[randomIndex].hook;
+  async generateHook(clipId: string, clipContext?: ClipCandidate): Promise<string> {
+    const clip = this.findClip(clipId, clipContext);
+    if (!clip) throw new Error(`Clip ${clipId} not found`);
+
+    return generateLocalText(
+      'Write concise, compelling social video hooks grounded only in the supplied clip context. Return only the hook.',
+      `Write one hook of at most 12 words for this clip.\nTitle: ${clip.title}\nTopic: ${clip.topic}\nTranscript: ${clip.transcriptExcerpt}`
+    );
   }
 
-  async generateCaption(clipId: string): Promise<string> {
-    await delay(600);
-    const captions = mockCaptions.filter((c) => c.clipId === clipId || true);
-    const randomIndex = Math.floor(Math.random() * captions.length);
-    return captions[randomIndex].caption;
+  async generateCaption(clipId: string, clipContext?: ClipCandidate): Promise<string> {
+    const clip = this.findClip(clipId, clipContext);
+    if (!clip) throw new Error(`Clip ${clipId} not found`);
+
+    return generateLocalText(
+      'Write accurate, readable social video captions grounded only in the supplied clip context. Return only the caption.',
+      `Write a concise caption for this clip.\nTitle: ${clip.title}\nTopic: ${clip.topic}\nTranscript: ${clip.transcriptExcerpt}`
+    );
   }
 
   async generatePlatformAdaptation(
     clipId: string,
-    platform: PlatformAdaptation['platform']
+    platform: PlatformAdaptation['platform'],
+    clipContext?: ClipCandidate
   ): Promise<PlatformAdaptation> {
-    await delay(800);
-    const match = mockPlatformAdaptations.find(
-      (a) => a.clipId === clipId && a.platform === platform
-    ) || mockPlatformAdaptations.find((a) => a.platform === platform);
+    const clip = this.findClip(clipId, clipContext);
 
-    if (!match) {
-      throw new Error('Adaptation failed');
+    if (!clip) throw new Error(`Clip ${clipId} not found`);
+    const format = platformFormats[platform];
+
+    const generated = await generateLocalJson<Pick<PlatformAdaptation, 'format' | 'hook' | 'title' | 'body' | 'hashtags' | 'callToAction'>>(
+      'Adapt video content for the requested social platform. Use only the supplied context. Return concise valid JSON with format, hook, title, body, hashtags, and callToAction fields. Keep hashtags as an array of strings.',
+      `Adapt this clip for ${platform}. Preserve its meaning and do not invent claims.\nFormat: ${format}\nTitle: ${clip.title}\nTopic: ${clip.topic}\nTranscript: ${clip.transcriptExcerpt}`
+    );
+
+    if (!generated.format || !generated.hook || !generated.body) {
+      throw new Error('Ollama returned an incomplete platform adaptation.');
     }
-    return match;
+
+    return {
+      id: `adaptation-${clipId}-${platform}`,
+      clipId,
+      platform,
+      format: generated.format || format,
+      hook: generated.hook,
+      title: generated.title,
+      body: generated.body,
+      hashtags: Array.isArray(generated.hashtags) ? generated.hashtags : [],
+      callToAction: generated.callToAction,
+    };
   }
 
   async getAssets(): Promise<GeneratedAsset[]> {
@@ -283,8 +446,15 @@ class ContentApiService {
         if (!error && data) {
           return (data.map(normalizeAsset).filter(Boolean) as GeneratedAsset[]) || [];
         }
+
+        if (error) {
+          console.error('Supabase getAssets returned an error:', error);
+        }
+
+        return [];
       } catch (error) {
         console.error('Supabase getAssets failed, falling back to mocks:', error);
+        return [];
       }
     }
 

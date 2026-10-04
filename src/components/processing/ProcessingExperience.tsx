@@ -6,12 +6,12 @@ export const ProcessingExperience: React.FC = () => {
   const { activeProject, navigateTo } = useProject();
 
   const stages = [
-    { title: 'Reading source file', desc: 'Decoding audio tracks & video keyframes' },
-    { title: 'Understanding speech', desc: 'Transcribing speech with millisecond word timestamps' },
-    { title: 'Mapping topics', desc: 'Detecting thematic shifts & conceptual boundaries' },
-    { title: 'Connecting script to footage', desc: 'Aligning spoken cadence with narrative outline' },
-    { title: 'Finding content opportunities', desc: 'Scoring complete thoughts and high-retention openings' },
-    { title: 'Preparing reusable assets', desc: 'Generating platform-native hooks, captions & vertical crops' },
+    { title: 'Preparing transcript', desc: 'Using the script or transcript you supplied' },
+    { title: 'Analyzing with Qwen3', desc: 'Finding themes and complete ideas' },
+    { title: 'Mapping topics', desc: 'Grouping the strongest themes' },
+    { title: 'Finding clip opportunities', desc: 'Selecting moments supported by the transcript' },
+    { title: 'Estimating timestamps', desc: 'Using transcript timing when available' },
+    { title: 'Preparing content map', desc: 'Organizing clips and reusable copy' },
   ];
 
   const [currentStep, setCurrentStep] = useState(0);

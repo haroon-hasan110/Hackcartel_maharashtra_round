@@ -29,6 +29,7 @@ export const CreatorStudio: React.FC = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentPlayTime, setCurrentPlayTime] = useState(activeClip.startTime);
     const [isRegeneratingHook, setIsRegeneratingHook] = useState(false);
+    const [isRegeneratingCaption, setIsRegeneratingCaption] = useState(false);
     const [hasUnsavedEdits, setHasUnsavedEdits] = useState(false);
 
     useEffect(() => {
@@ -97,7 +98,7 @@ export const CreatorStudio: React.FC = () => {
     const handleRegenerateHook = async () => {
         setIsRegeneratingHook(true);
         try {
-            const newHook = await api.generateHook(activeClip.id);
+            const newHook = await api.generateHook(activeClip.id, activeClip);
             setHookText(newHook);
             setHasUnsavedEdits(true);
             showNotification('New hook variation synthesized');
@@ -105,6 +106,20 @@ export const CreatorStudio: React.FC = () => {
             showNotification('Could not generate new hook');
         } finally {
             setIsRegeneratingHook(false);
+        }
+    };
+
+    const handleRegenerateCaption = async () => {
+        setIsRegeneratingCaption(true);
+        try {
+            const newCaption = await api.generateCaption(activeClip.id, activeClip);
+            setCaptionText(newCaption);
+            setHasUnsavedEdits(true);
+            showNotification('Qwen generated a new caption');
+        } catch {
+            showNotification('Could not generate caption. Check that Ollama is running.');
+        } finally {
+            setIsRegeneratingCaption(false);
         }
     };
 
@@ -515,9 +530,21 @@ export const CreatorStudio: React.FC = () => {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-medium mb-1.5" style={{ color: 'var(--color-text-main)' }}>
-                                Accompanying Caption
-                            </label>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="block text-xs font-medium" style={{ color: 'var(--color-text-main)' }}>
+                                    Accompanying Caption
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={handleRegenerateCaption}
+                                    disabled={isRegeneratingCaption}
+                                    className="text-[11px] flex items-center gap-1 transition-colors disabled:opacity-50"
+                                    style={{ color: 'var(--color-accent-terracotta)' }}
+                                >
+                                    <RefreshCw className={`w-3 h-3 ${isRegeneratingCaption ? 'animate-spin' : ''}`} />
+                                    <span>{isRegeneratingCaption ? 'Generating...' : 'Regenerate'}</span>
+                                </button>
+                            </div>
                             <textarea
                                 rows={4}
                                 value={captionText}

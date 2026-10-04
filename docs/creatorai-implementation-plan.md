@@ -30,7 +30,7 @@ The MVP includes:
 
 ## 4. Recommended Scope Split
 ### Member 1: AI + backend
-- Gemini integration
+- Ollama integration
 - prompt schema
 - analysis job flow
 - Edge Functions

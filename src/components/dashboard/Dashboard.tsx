@@ -9,7 +9,7 @@ import {
 import { useProject } from '../../context/ProjectContext';
 
 export const Dashboard: React.FC = () => {
-  const { projects, selectProject, navigateTo } = useProject();
+  const { projects, projectsLoaded, selectProject, navigateTo } = useProject();
   const [activePipelineStep, setActivePipelineStep] = useState<number>(0);
 
   const pipelineSteps = [
@@ -49,6 +49,57 @@ export const Dashboard: React.FC = () => {
     selectProject('proj-ai-agents');
     navigateTo('content-map');
   };
+
+  if (!projectsLoaded) {
+    return (
+      <div className="py-20 text-center text-sm" style={{ color: 'var(--color-text-muted)' }} role="status">
+        Loading your workspace...
+      </div>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <div className="space-y-8 pb-16">
+        <section className="max-w-3xl pt-2 md:pt-4">
+          <p className="font-mono text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--color-accent-terracotta)' }}>
+            Your workspace
+          </p>
+          <h1 className="mt-3 text-3xl font-bold leading-tight md:text-5xl" style={{ color: 'var(--color-text-main)' }}>
+            Your first project starts with a recording.
+          </h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+            There are no projects here yet. Add a source recording to start your content pipeline.
+          </p>
+        </section>
+
+        <section
+          className="flex min-h-72 flex-col items-center justify-center border border-dashed px-6 py-12 text-center"
+          style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg-card-elevated)' }}
+        >
+          <div
+            className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl"
+            style={{ backgroundColor: 'rgba(185, 237, 121, 0.14)', color: 'var(--color-accent-terracotta)' }}
+          >
+            <Layers className="h-7 w-7" />
+          </div>
+          <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text-main)' }}>
+            No projects yet
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+            Create a project to keep your recording, clips, and adaptations together.
+          </p>
+          <button
+            onClick={() => navigateTo('upload')}
+            className="clay-button-primary mt-6 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold shadow-sm"
+          >
+            <Plus className="h-4 w-4 stroke-[2.5]" />
+            Create your first project
+          </button>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-16">

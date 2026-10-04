@@ -3,7 +3,7 @@ import { Plus, Search, Filter, Clock, Film, Layers, ArrowUpRight, FolderOpen } f
 import { useProject } from '../../context/ProjectContext';
 
 export const Projects: React.FC = () => {
-  const { projects, selectProject, navigateTo } = useProject();
+  const { projects, projectsLoaded, selectProject, navigateTo } = useProject();
   const [filterTab, setFilterTab] = useState<'all' | 'recent' | 'drafts' | 'completed'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -19,6 +19,14 @@ export const Projects: React.FC = () => {
     if (filterTab === 'completed') return project.status === 'analyzed' || project.status === 'completed';
     return true;
   });
+
+  if (!projectsLoaded) {
+    return (
+      <div className="py-20 text-center text-sm" style={{ color: 'var(--color-text-muted)' }} role="status">
+        Loading your projects...
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-16">
